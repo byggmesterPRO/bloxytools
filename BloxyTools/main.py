@@ -57,9 +57,9 @@ async def get_prefix(bot, message):
 bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot', intents=intents)
 bot.remove_command('help')
 
-cogs = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail']
+cogsToBeLoaded = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail']
 
-for f in cogs:
+for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
     print(f'Loaded {f} cog')
 
