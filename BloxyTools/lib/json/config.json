@@ -1,0 +1,12 @@
+{
+    "bot_name": "Bloxy Tools",
+    "token": "Nzg4Nzk3MzUwNjUwNDQ1ODI0.X9ouxw.1UOCJFxG0jA6vavDs0VKF0qgdi4",
+    "is_server": false,
+    "prefix": "!",
+    "universal_prefix": "btm!",
+    "owner_ids": [257073333273624576],
+    "admin_ids": [],
+    "mod_ids": [],
+    "host": "192.168.1.67",
+    "db_pw": "einar1a2b3c"
+}

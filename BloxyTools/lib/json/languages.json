@@ -1,0 +1,44 @@
+{
+    "en": "English",
+    "cooldown_titles": {
+        "en": [
+        "Chill a bit!",
+        "Slow down!", 
+        "Command cooldown!", 
+        "Enter the chill zone my g",
+        "Woah, slow down there buckaroo",
+        "Slow down and enjoy life",
+        "Slack off mate", 
+        "Hold your Horses!",
+        "My computational powers can't handle of this",
+        "Omg, can you just wait?",
+        "Cooldown.py has started",
+        "Why can't you wait?",
+        "Your a bit too fast there",
+        "Please wait, cooldown is active",
+        "print ('Cooldown is active')"
+            ],
+            
+        "no": [
+        "Chill da!",
+        "Ro ned!",
+        "Ro deg ned!",
+        "Gå til chill-sonen my g",
+        "Woah, sakk ned farten cowboy!",
+        "Slakk av kompis",
+        "Hold hestene dine!",
+        "Beregningskreftene mine takler ikke dette",
+        "Omg, kan du bare vente?",
+        "Cooldown.py har startet",
+        "Hvorfor kan du ikke vente?",
+        "Du er litt for rask!",
+        "Vennligts vent, cooldown er aktiv",
+        "print('Cooldown er aktiv')"
+        ]
+    },
+    "solutions": {
+        "en": "Solutions",
+        "no": "Losninger"
+    },
+    "no": "Norsk"
+}
