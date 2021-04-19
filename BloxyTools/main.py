@@ -62,11 +62,7 @@ cogs = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail']
 for f in cogs:
     bot.load_extension(f'lib.cogs.{f}')
     print(f'Loaded {f} cog')
-@bot.command()
-async def cacheinfo(ctx):
-    yes = get_prefix.cache_info()
-    print(yes)
-    await ctx.send(yes)
+
 
 
 
