@@ -8,8 +8,10 @@ import asyncpg
 import time
 import os
 import sys
+import requests
 
-
+from flask import Flask, request, Response
+from discord_webhook import DiscordWebhook, DiscordEmbed
 from functools import lru_cache
 from discord.ext import commands, tasks
 from aiohttp import web
@@ -26,6 +28,7 @@ UNIVERSAL_PREFIX = config["universal_prefix"]
 #Database Variables
 HOST = config['host']
 DB_PW = config['db_pw']
+DBL_TOKEN = config['dbl_token']
 loop = asyncio.get_event_loop()
 
 #Printing to verify for me ;)
@@ -57,13 +60,34 @@ async def get_prefix(bot, message):
 bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot', intents=intents)
 bot.remove_command('help')
 
+#Loading Cogs
 cogsToBeLoaded = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail']
 
 for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
     print(f'Loaded {f} cog')
 
+#Starting Vote Tracker
+def on_vote(data):
+    response = requests.get(url=f'https://discord.com/api/v6/users/{data["user"]}', headers = {
+        'Authorization': f"Bot {DBL_TOKEN}"
+    })
+    response = response.json()
+    embed = DiscordEmbed(colour=discord.Colour(
+            0x5d4b98), url="https://discordapp.com", description="Thanks for your vote!")
+    embed.set_footer(text="Voting Tracker")
+    embed.set_author(name=f"{response['username']}#{response['discriminator']} Voted!", url="https://discordapp.com",
+                 icon_url=f"https://cdn.discordapp.com/avatars/{response['id']}/{response['avatar']}")
 
+    webhook = DiscordWebhook(url='https://discord.com/api/webhooks/834082592957530152/1pVHnoKi70Xq2E9G9rIZAAI4bNVUvWz4F4P825FIqQhykgc7OFVy5oLlodKYgNuO4y3p')
+    webhook.add_embed(embed)
+    response = webhook.execute()
+app = Flask(__name__)
+@app.route('/webhook', methods=['POST'])
+def respond():
+    on_vote(request.json)
+    return Response(status=200)
+ 
 
 
 
