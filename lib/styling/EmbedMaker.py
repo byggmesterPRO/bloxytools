@@ -9,24 +9,20 @@ from discord import Embed, Color
 with open('lib/json/var.json', 'r') as f:
     var = json.load(f)
 
-with open('lib/json/languages.json', 'r') as f:
-    language = json.load(f)
 
 BLOXY_TITLE = var['title']
 BUILD = var['build']
 VERSION = var['version']
 COLOR = 0xe85755
 RARE_COOLDOWN_TITLES = var['rare_cooldown_titles']
+COOLDOWN_TITLES = var['cooldown_titles']
 
 
-
-def cooldown_title(lang):
+def cooldown_title():
     RANDOM_NUMBER = random.randint(0, 100)
     if RANDOM_NUMBER == 2: #NoNameUltra the banana god chose this
         COOLDOWN_TITLE = random.choice(RARE_COOLDOWN_TITLES)
     else:
-        print(lang)
-        COOLDOWN_TITLES = language['cooldown_titles'][lang]
         COOLDOWN_TITLE = random.choice(COOLDOWN_TITLES)
     return COOLDOWN_TITLE
 
@@ -42,17 +38,17 @@ def default_embed(ctx, desc=None):
     embed = handle_embed(ctx, embed)
     return embed
 
-def error_embed(ctx, msg, lang):
+def error_embed(ctx, msg):
     embed = Embed(title="An error occured!", timestamp=datetime.datetime.utcnow(), color=Color.red())
     embed.add_field(name="Error", value=msg)
-    embed.add_field(name=language['solutions'][lang], value="-Try doing the command again \n-Wait longer and try again \n-Report it in the support server!")
+    embed.add_field(name="Solutions", value="-Try doing the command again \n-Wait longer and try again \n-Report it in the support server!")
     embed.add_field(name="Support", value="If you believe this was wrong please join our [support](https://discord.gg/FWXVJdPRRA) server and report it there!")
     embed = handle_embed(ctx, embed)
     return embed
 
 
-def cooldown_embed(ctx, lang, desc=None):
-    embed = Embed(title=cooldown_title(lang), timestamp=datetime.datetime.utcnow(), color=Color.blue(), description=desc)
+def cooldown_embed(ctx, desc=None):
+    embed = Embed(title=cooldown_title(), timestamp=datetime.datetime.utcnow(), color=Color.blue(), description=desc)
     embed = handle_embed(ctx, embed)
     return embed
 
@@ -106,3 +102,8 @@ def modmail_embed2(ctx, author, msg):
 
         embed.add_field(name="Sent from", value=f"**{author.display_name}** / {str(author.top_role)}")
     return embed
+
+def pointStore_Embed(ctx, language):
+    with open('lib/json/', 'r') as f:
+        pointData = json.load(f)
+    embed = default_embed(ctx, "")
