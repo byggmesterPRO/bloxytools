@@ -12,7 +12,7 @@ DBL_TOKEN = config['dbl_token']
 class PointStore(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.DBL_TOKEN = DBL_TOKEN
+
 
 
 
