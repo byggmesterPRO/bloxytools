@@ -14,17 +14,6 @@ IGNORE_EXCEPTIONS=(CommandNotFound, BadArgument)
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot=bot        
-    async def get_lang(self, ctx):
-        try:
-            lang = await self.bot.db.fetch("SELECT lang FROM guild_prefixes WHERE guild_id=$1", ctx.guild.id)
-            lang = lang[0]['lang']
-        except Exception as e:
-            lang = 'en'
-        if lang == None:
-            lang = 'en'
-        else:
-            lang = lang
-        return lang
     @commands.Cog.listener()
     async def on_command_error(self, ctx, exc):
         if any([isinstance(exc, error) for error in IGNORE_EXCEPTIONS]):
@@ -39,17 +28,7 @@ class ErrorHandler(commands.Cog):
             embed = EmbedMaker.error_embed(ctx, "One or more required arguments is missing!", lang)
             await ctx.send(embed=embed)
         elif isinstance(exc, CommandOnCooldown):
-            try:
-                lang = await self.bot.db.fetch("SELECT lang FROM guild_prefixes WHERE guild_id=$1", ctx.guild.id)
-                lang = lang[0]['lang']
-            except Exception as e:
-                lang = 'en'
-            if lang == None:
-                lang = 'en'
-            else:
-                lang = lang
-            embed = EmbedMaker.cooldown_embed(ctx, lang)
-            embed.add_field(name="Cooldown!", value=f"You may retry after {exc.retry_after:,.2f} seconds")
+            embed = EmbedMaker.cooldown_embed(ctx, f"You may retry after {exc.retry_after:,.2f} seconds")
             await ctx.send(embed=embed)
         elif isinstance(exc, MissingPermissions):
             lang = await self.get_lang(ctx)
