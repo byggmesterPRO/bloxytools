@@ -103,7 +103,10 @@ def modmail_embed2(ctx, author, msg):
         embed.add_field(name="Sent from", value=f"**{author.display_name}** / {str(author.top_role)}")
     return embed
 
-def pointStore_Embed(ctx, language):
-    with open('lib/json/', 'r') as f:
+def pointStore_Embed(ctx):
+    with open('lib/json/store.json', 'r') as f:
         pointData = json.load(f)
-    embed = default_embed(ctx, "")
+    embed = default_embed(ctx, "This is the store, this is where you may purchase roles and other perks that will come along with Bloxy Tools")
+    for i in pointData['store']:
+        embed.add_field(name=pointData["store"][i]['title'], value=f"```\nPrice: {str(pointData['store'][i]['price'])} points.\nDescription:{pointData['store'][i]['description']}\n```", inline=False)
+    return embed

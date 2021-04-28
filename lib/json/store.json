@@ -1,46 +1,34 @@
 {
     "store": {
-        "premium": {
-            "title": "Bloxy Tools Premium 1 month",
-            "description": "N/A",
-            "type": "point",
-            "price": 5000
-        },
         "voter": {
             "title": "Voter",
             "description": "N/A",
-            "type": "vote",
-            "price": 10
+            "price": 1000
         },
         "awesomeVoter": {
             "title": "Awesome Voter",
             "description": "N/A",
-            "type": "vote",
-            "price": 25
+            "price": 2500
         },
         "loyalVoter": {
             "title": "Loyal Voter",
             "description": "N/A",
-            "type": "vote",
-            "price": 30
+            "price": 3000
         },
         "dedicatedVoter": {
-            "title": "Voter",
+            "title": "Dedicated Voter",
             "description": "N/A",
-            "type": "vote",
-            "price": 50
+            "price": 5000
         },
         "InsaneVoter": {
-            "title": "Voter",
+            "title": "Insane Voter",
             "description": "N/A",
-            "type": "vote",
-            "price": 75
+            "price": 7500
         },
         "noLifeVoter": {
-            "title": "Voter",
+            "title": "No-Life Voter",
             "description": "N/A",
-            "type": "vote",
-            "price": 100
+            "price": 10000
         }
     }
 }

@@ -24,22 +24,19 @@ class ErrorHandler(commands.Cog):
             embed = EmbedMaker.error_embed(ctx, "I am missing one or more permissions to execute this command!")
             await ctx.send(embed=embed)
         elif isinstance(exc, MissingRequiredArgument):
-            lang = await self.get_lang(ctx)
-            embed = EmbedMaker.error_embed(ctx, "One or more required arguments is missing!", lang)
+            embed = EmbedMaker.error_embed(ctx, "One or more required arguments is missing!")
             await ctx.send(embed=embed)
         elif isinstance(exc, CommandOnCooldown):
             embed = EmbedMaker.cooldown_embed(ctx, f"You may retry after {exc.retry_after:,.2f} seconds")
             await ctx.send(embed=embed)
         elif isinstance(exc, MissingPermissions):
-            lang = await self.get_lang(ctx)
-            embed = EmbedMaker.error_embed(ctx, "You are missing permissions!", lang)
+            embed = EmbedMaker.error_embed(ctx, "You are missing permissions!")
             await ctx.send(embed=embed)
         elif isinstance(exc, KeyError):
             embed = EmbedMaker.error_embed(ctx, "That's not a username my guy")
             await ctx.send(embed=embed)
         else:
-            lang = await self.get_lang(ctx)
-            embed = EmbedMaker.error_embed(ctx, "Unkown error! Please screenshot this and send it in the support server!", lang)
+            embed = EmbedMaker.error_embed(ctx, "Unkown error! Please screenshot this and send it in the support server!")
             await ctx.send(embed=embed)
             raise exc.original
 def setup(bot):

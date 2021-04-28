@@ -2,20 +2,17 @@ import discord
 import requests
 import json
 from discord.ext import commands
-from flask import Flask, request, Response
-from discord_webhook import DiscordWebhook, DiscordEmbed
-from lib.Functions import CommandProcess as cp
-
+from lib.styling import EmbedMaker
 
 class PointStore(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    @commands.cooldown(1.0, 15.0, commands.BucketType.user)
-    async def shop(ctx, *, msg):
-        pass
-        cp.process_command(ctx)
+    @commands.cooldown(1.0, 5.0, commands.BucketType.user)
+    async def shop(self, ctx):
+        embed = EmbedMaker.pointStore_Embed(ctx)
+        await ctx.send(embed=embed)
 
 
    

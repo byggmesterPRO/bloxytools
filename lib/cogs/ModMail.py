@@ -67,7 +67,7 @@ class ModMail(commands.Cog):
             channel = json.load(f)
         if ctx.channel.id != channel["mail_channel"]:
             return
-        with open("lib/json/modmail.json", "r") as f:
+        with open("lib/json/var.json", "r") as f:
             replace = json.load(f)
         main_guild = self.bot.get_guild(channel["server"])
         if not main_guild:
@@ -111,13 +111,13 @@ class ModMail(commands.Cog):
             channels = json.load(f)
         if ctx.channel.id != channels['mail_channel']:
             return
-        with open("lib/json/modmail.json", "r") as f:
+        with open("lib/json/var.json", "r") as f:
             modmail = json.load(f)
         if ctx.author.id in modmail["replacements"]:
             await ctx.send("You're already hidden! 🕵️")
             return
         modmail['replacements'] += [ctx.author.id]
-        with open("lib/json/modmail.json", "w") as f:
+        with open("lib/json/var.json", "w") as f:
             channels = json.dump(modmail, f)
         await ctx.send("You're now hidden! 🕵️")
 
@@ -127,12 +127,12 @@ class ModMail(commands.Cog):
             channels = json.load(f)
         if ctx.channel.id != channels['mail_channel']:
             return
-        with open("lib/json/modmail.json", "r") as f:
+        with open("lib/json/var.json", "r") as f:
             modmail = json.load(f)
         if ctx.author.id in modmail["replacements"]:
             index = modmail["replacements"].index(ctx.author.id)
             del modmail["replacements"][index]
-            with open("lib/json/modmail.json", "w") as f:
+            with open("lib/json/var.json", "w") as f:
                 channels = json.dump(modmail, f)
             await ctx.send("You're now unhidden! 🙆")
         else:
