@@ -52,6 +52,8 @@ def cooldown_embed(ctx, desc=None):
     embed = handle_embed(ctx, embed)
     return embed
 
+def missing_requiredArgument(ctx):
+    embed = default_embed(ctx)
 
 def modmail_embed(message, author, content=None):
     embed = Embed(title=BLOXY_TITLE, timestamp=datetime.datetime.utcnow(), color=COLOR)
@@ -106,7 +108,7 @@ def modmail_embed2(ctx, author, msg):
 def pointStore_Embed(ctx):
     with open('lib/json/store.json', 'r') as f:
         pointData = json.load(f)
-    embed = default_embed(ctx, "This is the store, this is where you may purchase roles and other perks that will come along with Bloxy Tools")
+    embed = default_embed(ctx, "This is the store, this is where you may purchase roles and other perks that will come along with Bloxy Tools\n\nYou are able to claim these roles in the [support server!](https://discord.gg/FWXVJdPRRA)")
     for i in pointData['store']:
-        embed.add_field(name=pointData["store"][i]['title'], value=f"```\nPrice: {str(pointData['store'][i]['price'])} points.\nDescription:{pointData['store'][i]['description']}\n```", inline=False)
+        embed.add_field(name=pointData["store"][i]['title'], value=f"```\nPrice: {str(pointData['store'][i]['price'])} points.\nDescription:{pointData['store'][i]['description']}\nID: '{pointData['store'][i]['id']}'```", inline=False)
     return embed

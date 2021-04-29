@@ -82,10 +82,8 @@ for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
     print(f'Loaded {f} cog')
 
-#Starting Vote Tracker
 
-
-    
+ 
 
 
 
@@ -103,6 +101,5 @@ async def clear_today():
 #Run Connections/API's etc.
 loop.run_until_complete(create_db_pool())
 clear_today.start()
-loop.run_until_complete(get_prefixDict())
 TOKEN = config['token']
 bot.run(TOKEN)

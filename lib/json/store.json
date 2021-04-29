@@ -2,31 +2,37 @@
     "store": {
         "voter": {
             "title": "Voter",
+            "id" : "voter",
             "description": "N/A",
             "price": 1000
         },
         "awesomeVoter": {
-            "title": "Awesome Voter",
+            "title":"Awesome Voter",
+            "id" : "awesomevoter",
             "description": "N/A",
             "price": 2500
         },
         "loyalVoter": {
             "title": "Loyal Voter",
+            "id" : "loyalvoter",
             "description": "N/A",
             "price": 3000
         },
         "dedicatedVoter": {
             "title": "Dedicated Voter",
+            "id" : "dedicatedvoter",
             "description": "N/A",
             "price": 5000
         },
         "InsaneVoter": {
             "title": "Insane Voter",
+            "id" : "insanevoter",
             "description": "N/A",
             "price": 7500
         },
         "noLifeVoter": {
             "title": "No-Life Voter",
+            "id" : "nolifevoter",
             "description": "N/A",
             "price": 10000
         }
