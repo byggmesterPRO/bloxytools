@@ -45,7 +45,7 @@ class PointStore(commands.Cog):
             await ctx.send("Remember to choose between `points` and `votes` when typing the command next time")
             return
         elif msg == 'votes':
-            result = await self.bot.db.fetch("SELECT user_id, total_votes FROM point_data ORDER by points DESC LIMIT 10;")
+            result = await self.bot.db.fetch("SELECT user_id, total_votes FROM point_data ORDER by total_votes DESC LIMIT 10;")
             value = 1
             processedString = "```\n"
             message = await ctx.send("Loading leaderboard...")
