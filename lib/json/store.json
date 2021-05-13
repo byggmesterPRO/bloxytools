@@ -6,31 +6,31 @@
             "description": "N/A",
             "price": 1000
         },
-        "awesomeVoter": {
+        "awesomevoter": {
             "title":"Awesome Voter",
             "id" : "awesomevoter",
             "description": "N/A",
             "price": 2500
         },
-        "loyalVoter": {
+        "loyalvoter": {
             "title": "Loyal Voter",
             "id" : "loyalvoter",
             "description": "N/A",
             "price": 3000
         },
-        "dedicatedVoter": {
+        "dedicatedvoter": {
             "title": "Dedicated Voter",
             "id" : "dedicatedvoter",
             "description": "N/A",
             "price": 5000
         },
-        "InsaneVoter": {
+        "Insanevoter": {
             "title": "Insane Voter",
             "id" : "insanevoter",
             "description": "N/A",
             "price": 7500
         },
-        "noLifeVoter": {
+        "nolifevoter": {
             "title": "No-Life Voter",
             "id" : "nolifevoter",
             "description": "N/A",

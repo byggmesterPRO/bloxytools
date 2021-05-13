@@ -76,14 +76,30 @@ bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot')
 bot.remove_command('help')
 
 #Loading Cogs
-cogsToBeLoaded = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail', 'PointStore']
+cogsToBeLoaded = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail', 'PointStore', 'Verification']
 
 for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
     print(f'Loaded {f} cog')
 
-
- 
+@bot.command()
+async def reload(ctx):
+    if ctx.author.id != 257073333273624576:
+        return
+    errorMessage = ''
+    for cog in cogsToBeLoaded:
+        try:
+            bot.unload_extension(f'lib.cogs.{cog}')
+        except:
+            errorMessage += f'{cog} failed to unload\n'
+    await ctx.send("Unloaded all the cogs | Error: " + errorMessage)
+    errorMessage = ''
+    for cog in cogsToBeLoaded:
+        try:
+            bot.load_extension(f'lib.cogs.{cog}')
+        except:
+            errorMessage += f'{cog} failed to load\n'
+    await ctx.send("Loaded all the cogs | Error: " + errorMessage)
 
 
 
