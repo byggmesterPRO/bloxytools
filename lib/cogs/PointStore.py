@@ -75,6 +75,9 @@ class PointStore(commands.Cog):
             else:
                 await ctx.send("You can't afford this!")
                 return
+            if msg in balance['inventory']:
+                await ctx.send("You already have this item")
+                return
             message = await ctx.send(f"Are you sure you want to buy `{title}` for `{price}` points?")
             def check(reaction, user):
                 return user == ctx.author and reaction.emoji in ['✅', '❌']

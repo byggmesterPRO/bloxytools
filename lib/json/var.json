@@ -1,10 +1,10 @@
 {
     "title": "Bloxy Tools",
-    "rare_cooldown_titles": ["STOP SSTOOOOP STAAAAAAAP", "byggmesterPRO is a god!"],
+    "rare_cooldown_titles": ["STOP SSTOOOOP STAAAAAAAP"],
     "bloxy_color": "e85755",
     "premium_bloxy_color": "#FFD700",
     "version": "v1",
-    "build": "1.0",
+    "build": "v1.0.1",
     "cooldown_titles": [
         "Chill a bit!",
         "Slow down!", 

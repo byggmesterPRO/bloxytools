@@ -16,7 +16,7 @@ VERSION = var['version']
 COLOR = 0xe85755
 RARE_COOLDOWN_TITLES = var['rare_cooldown_titles']
 COOLDOWN_TITLES = var['cooldown_titles']
-
+SUPPORTSERVER = "https://discord.gg/W3b6jHPMCg"
 
 def cooldown_title():
     RANDOM_NUMBER = random.randint(0, 100)
@@ -28,8 +28,8 @@ def cooldown_title():
 
 
 def handle_embed(ctx, embed):
-    embed.set_author(name="({}#{})".format(ctx.author.name, ctx.author.discriminator), icon_url=ctx.author.avatar_url)
-    embed.set_footer(text=f"{VERSION} Alpha System", icon_url="https://i.imgur.com/UZAgLJ6.png")
+    embed.set_author(name="{}#{}".format(ctx.author.name, ctx.author.discriminator), icon_url=ctx.author.avatar_url)
+    embed.set_footer(text=f"{BUILD} Alpha System | {SUPPORTSERVER}", icon_url="https://i.imgur.com/UZAgLJ6.png")
     return embed
 
 
@@ -42,7 +42,7 @@ def error_embed(ctx, msg):
     embed = Embed(title="An error occured!", timestamp=datetime.datetime.utcnow(), color=Color.red())
     embed.add_field(name="Error", value=msg)
     embed.add_field(name="Solutions", value="-Try doing the command again \n-Wait longer and try again \n-Report it in the support server!")
-    embed.add_field(name="Support", value="If you believe this was wrong please join our [support](https://discord.gg/FWXVJdPRRA) server and report it there!")
+    embed.add_field(name="Support", value=f"If you believe this was wrong please join our [support]({SUPPORTSERVER}) server and report it there!")
     embed = handle_embed(ctx, embed)
     return embed
 
@@ -108,7 +108,14 @@ def modmail_embed2(ctx, author, msg):
 def pointStore_Embed(ctx):
     with open('lib/json/store.json', 'r') as f:
         pointData = json.load(f)
-    embed = default_embed(ctx, "This is the store, this is where you may purchase roles and other perks that will come along with Bloxy Tools\n\nYou are able to claim these roles in the [support server!](https://discord.gg/FWXVJdPRRA)")
+    embed = default_embed(ctx, f"This is the store, this is where you may purchase roles and other perks that will come along with Bloxy Tools\n\nYou are able to claim these roles in the [support server!]({SUPPORTSERVER})")
     for i in pointData['store']:
         embed.add_field(name=pointData["store"][i]['title'], value=f"```\nPrice: {str(pointData['store'][i]['price'])} points.\nDescription:{pointData['store'][i]['description']}\nID: '{pointData['store'][i]['id']}'```", inline=False)
+    return embed
+
+def errorReport_embed(ctx, error):
+    embed = Embed(title="An error occured!",description=error ,timestamp=datetime.datetime.utcnow(), color=Color.red())
+    embed.add_field(name="User", value=ctx.author.mention)
+    embed.add_field(name="Server", value=ctx.guild.name)
+    embed = handle_embed(ctx, embed)
     return embed

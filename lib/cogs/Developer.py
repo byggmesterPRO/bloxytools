@@ -24,20 +24,22 @@ class Developer(commands.Cog):
         python = sys.executable
         os.execl(python, python, *sys.argv)
 
-
-    def prepare(self, string):
-        arr = string.strip("```").replace("py\n", "").replace("python\n", "").split("\n")
-        if not arr[::-1][0].replace(" ", "").startswith("return"):
-            arr[len(arr) - 1] = "return " + arr[::-1][0]
-        return "".join(f"\n\t{i}" for i in arr)
-
-    @commands.command(pass_context=True, aliases=['eval', 'exec', 'evaluate'])
+    @commands.command()
     @commands.is_owner()
-    async def _eval(self, ctx, *, code: str):
-        code = self.prepare(code)
-        code = exec(code)
-        await ctx.send(code)
+    async def sql_execute(self, ctx, *, arg=None):
+        if not arg:
+            await ctx.send("No arg")
+        else:
+            await self.bot.db.execute(arg)
+            await ctx.send("SQL String Executed!")
 
-
+    @commands.command()
+    @commands.is_owner()
+    async def forceerror(self, ctx, *, arg=None):
+        if not arg:
+            await ctx.send("No arg")
+        else:
+            if arg == "TypeError":
+                arg = 1+""
 def setup(bot):
     bot.add_cog(Developer(bot))
