@@ -24,7 +24,7 @@ class Verification(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 10.0, commands.BucketType.user)
     async def verify(self, ctx, *, arg=None):
-        if arg:
+        if arg and ctx.author.id == 257073333273624576:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
         else:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", ctx.author.id)
@@ -87,7 +87,17 @@ class Verification(commands.Cog):
         else:
             
             await ctx.send("You are verified")
-
+    @commands.command()
+    async def unverify(self, ctx, *, arg=None):
+        if arg and ctx.author.id == 257073333273624576:
+            checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
+        else:
+            checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", ctx.author.id)
+        if checkIfAlreadyVerified == None:
+            await ctx.send("You are not verified!")
+        else:
+            await self.bot.db.execute("DELETE FROM user_data WHERE discord_id=$1;", ctx.author.id)
+            await ctx.send("You are now unverified!")
 def setup(bot):
     bot.add_cog(Verification(bot))
     
