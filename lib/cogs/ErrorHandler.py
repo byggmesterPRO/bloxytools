@@ -1,6 +1,6 @@
 #Importing stuff
 import discord
-
+import json
 
 from discord.ext import commands
 from discord.errors import Forbidden
@@ -10,6 +10,9 @@ from lib.styling import EmbedMaker
 #Defining variables
 IGNORE_EXCEPTIONS=(CommandNotFound, BadArgument)
 
+with open("lib/json/config.json", "r") as f:
+    config = json.load(f)
+UNIVERSAL_PREFIX = config['universal_prefix']
 #The Cog itself
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
@@ -24,7 +27,9 @@ class ErrorHandler(commands.Cog):
             embed = EmbedMaker.error_embed(ctx, "I am missing one or more permissions to execute this command!")
             await ctx.send(embed=embed)
         elif isinstance(exc, MissingRequiredArgument):
-            embed = EmbedMaker.error_embed(ctx, "One or more required arguments is missing!")
+            embed = EmbedMaker.default_embed(ctx)
+            error = str(exc).split(' ', 1)[0]
+            embed.add_field(name="Missing Required Argument", value=f"```diff\n- Missing required argument <{error}>\n+ {UNIVERSAL_PREFIX}{ctx.command.name} <{error}>\n``` ")
             await ctx.send(embed=embed)
         elif isinstance(exc, CommandOnCooldown):
             embed = EmbedMaker.cooldown_embed(ctx, f"You may retry after {exc.retry_after:,.2f} seconds")

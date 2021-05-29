@@ -4,6 +4,7 @@ import aiohttp
 import json
 import random
 
+from lib.Functions import CommandProcess as cp 
 from datetime import date
 from discord.ext import commands
 
@@ -24,7 +25,10 @@ class Verification(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 10.0, commands.BucketType.user)
     async def verify(self, ctx, *, arg=None):
-        if arg and ctx.author.id == 257073333273624576:
+        cp.process_command(ctx)
+        IF_DEVELOPER = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1", ctx.author.id)
+        if IF_DEVELOPER[0]['discord_id']:
+            arg = arg or ctx.author.id
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
         else:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", ctx.author.id)
@@ -62,8 +66,10 @@ class Verification(commands.Cog):
                                     return
                                 randomGeneratedString = randomString()
                                 await ctx.send(f"Put this into your description `{randomGeneratedString}` and type in the chat `done` when you have placed it there `You got 300 seconds`")
+                                def check3(m):
+                                    return ctx.author == m.author and m.channel == ctx.channel and m.content.lower() == 'done'
                                 try:
-                                    message = await self.bot.wait_for('message', timeout=300.0, check=check2)
+                                    message = await self.bot.wait_for('message', timeout=300.0, check=check3)
                                 except asyncio.TimeoutError:
                                     await ctx.send("Command timed out!")
                                 else:
@@ -89,15 +95,18 @@ class Verification(commands.Cog):
             await ctx.send("You are verified")
     @commands.command()
     async def unverify(self, ctx, *, arg=None):
+        cp.process_command(ctx)
         if arg and ctx.author.id == 257073333273624576:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
+            RobloxId = int(arg)
         else:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", ctx.author.id)
+            RobloxId = ctx.author.id 
         if checkIfAlreadyVerified == None:
             await ctx.send("You are not verified!")
-        else:
-            await self.bot.db.execute("DELETE FROM user_data WHERE discord_id=$1;", ctx.author.id)
-            await ctx.send("You are now unverified!")
+            return
+        await self.bot.db.execute("DELETE FROM user_data WHERE discord_id=$1;", RobloxId)
+        await ctx.send("You are now unverified!")
 def setup(bot):
     bot.add_cog(Verification(bot))
     

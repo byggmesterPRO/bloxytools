@@ -112,7 +112,22 @@ async def clear_today():
     stats['verified_users_today'] = 0
     with open('lib/json/stats.json', 'w') as f:
         stats = json.dump(stats, f)
+def get_guildCount():
+    guild_count = 0
+    for guild in bot.guilds:
+        guild_count += 1
+    return str(guild_count)
 
+@tasks.loop(seconds=60.1)
+async def change_pr():
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="DM for support!"))
+    await asyncio.sleep(15)
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="do bt!votecheck"))
+    await asyncio.sleep(15)
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="remember to vote | bt!votecheck"))
+    await asyncio.sleep(15)
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
+    await asyncio.sleep(15)
 
 #Run Connections/API's etc.
 loop.run_until_complete(create_db_pool())

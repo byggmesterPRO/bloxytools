@@ -5,6 +5,7 @@ from discord.ext import commands, tasks
 from lib.styling import EmbedMaker
 import json
 
+from lib.Functions import CommandProcess as cp
 import asyncio
 import logging
 
@@ -22,7 +23,8 @@ class TopGG(commands.Cog):
 
     @commands.command()
     async def votecheck(self, ctx, *, arg=None):
-        IF_DEVELOPER = await self.bot.db.fetch(f"SELECT discord_id FROM developers WHERE discord_id={ctx.author.id}")
+        cp.process_command(ctx)
+        IF_DEVELOPER = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1", ctx.author.id)
         if IF_DEVELOPER[0]['discord_id']:
             arg = arg or ctx.author.id
         else:

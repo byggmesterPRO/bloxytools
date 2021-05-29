@@ -35,11 +35,12 @@ class Developer(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
-    async def forceerror(self, ctx, *, arg=None):
-        if not arg:
-            await ctx.send("No arg")
-        else:
-            if arg == "TypeError":
-                arg = 1+""
+    async def forceerror(self, ctx, *, arg):
+        if arg.lower() == "TypeError".lower():
+            arg = 1+""
+        if arg.lower() == "argument":
+            def argumentForceError(e):
+                pass
+            argumentForceError() 
 def setup(bot):
     bot.add_cog(Developer(bot))
