@@ -9,11 +9,13 @@ from datetime import date
 from discord.ext import commands
 
 RANDOMWORDS = ['dino', 'orange', 'yellow', 'purple', 'green', 'red']
+RANDOMWORDS2 = ['or', 'and']
 def randomString():
     string1 = ""
     for i in range(0, 5):
         randomChoice = random.choice(RANDOMWORDS)
-        string1 += (" " + randomChoice)
+        randomChoice2 = random.choice(RANDOMWORDS2)
+        string1 += (randomChoice2 + " " + randomChoice)
     return string1
 
 class Verification(commands.Cog):
