@@ -7,15 +7,8 @@ intents.members = True
 """
 import json
 import asyncpg
-import time
-import os
-import sys
-import requests
-
-from functools import lru_cache
 from discord.ext import commands, tasks
-from aiohttp import web
-from datetime import datetime, timedelta
+from cache import AsyncLRU
 
 #Opening Config.json for the configuration of the bot
 with open("lib/json/config.json", "r") as f:
@@ -44,6 +37,7 @@ async def create_db_pool():
 
 
 #Get's the prefix of the current server using their ID, this will default to ! unless they have changed their prefix
+@AsyncLRU(maxsize=512)
 async def get_prefixDict():
     fetched = await bot.db.fetch("SELECT guild_id, guild_prefix FROM guild_prefixes;")
     processedDict = {}

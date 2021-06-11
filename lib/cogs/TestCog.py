@@ -53,7 +53,7 @@ class TestCog(commands.Cog):
         embed = EmbedMaker.cooldown_embed(ctx, lang)
         embed.add_field(name="Cooldown!", value="You may retry after `this many seconds` seconds")
         await ctx.send(embed=embed)
-        cp.process_command(ctx)        
+        await cp.process_command(ctx)        
 
     @commands.command()
     async def embed_t(self, ctx):
@@ -85,14 +85,14 @@ class TestCog(commands.Cog):
     async def default_embed(self, ctx):
         embed = EmbedMaker.default_embed(ctx, "Default Embed Test")
         await ctx.send(embed=embed)
-        cp.process_command(ctx)
+        await cp.process_command(ctx)
 
     @commands.command()
     async def error_embed(self, ctx):
         lang = await self.get_lang(ctx)
         embed = EmbedMaker.error_embed(ctx, "Error Embed Test", lang)
         await ctx.send(embed=embed)
-        cp.process_command(ctx)
+        await cp.process_command(ctx)
 
     @commands.command()
     async def dbtest(self, ctx):

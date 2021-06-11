@@ -25,7 +25,8 @@ class Verification(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 10.0, commands.BucketType.user)
     async def verify(self, ctx, *, arg=None):
-        cp.process_command(ctx)
+        await cp.process_command(ctx)
+        await cp.register_user(ctx)
         IF_DEVELOPER = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1", ctx.author.id)
         if IF_DEVELOPER[0]['discord_id']:
             arg = arg or ctx.author.id
@@ -95,7 +96,7 @@ class Verification(commands.Cog):
             await ctx.send("You are verified")
     @commands.command()
     async def unverify(self, ctx, *, arg=None):
-        cp.process_command(ctx)
+        await cp.process_command(ctx)
         if arg and ctx.author.id == 257073333273624576:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
             RobloxId = int(arg)
