@@ -42,5 +42,12 @@ class Developer(commands.Cog):
             def argumentForceError(e):
                 pass
             argumentForceError() 
+    @commands.command()
+    @commands.is_owner()
+    async def help_list(self, ctx):
+        string1 = ""
+        for i in self.bot.commands:
+            string1 += i.name + "\n"
+        await ctx.send(string1)
 def setup(bot):
     bot.add_cog(Developer(bot))

@@ -70,11 +70,15 @@ bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot')
 bot.remove_command('help')
 
 #Loading Cogs
-cogsToBeLoaded = ['ErrorHandler', 'TestCog', 'Developer', 'ModMail', 'PointStore', 'Verification', 'Misc']
+cogsToBeLoaded = ['ErrorHandler', 'Developer', 'ModMail', 'PointStore', 'Verification', 'Misc']
 
 for f in cogsToBeLoaded:
-    bot.load_extension(f'lib.cogs.{f}')
-    print(f'Loaded {f} cog')
+    try:
+        bot.load_extension(f'lib.cogs.{f}')
+    except:
+        print(f"Couldn't load {f} cog")
+    else:
+        print(f'Loaded {f} cog')
 
 @bot.command()
 async def reload(ctx):
