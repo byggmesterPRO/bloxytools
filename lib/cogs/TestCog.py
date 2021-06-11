@@ -36,17 +36,7 @@ class TestCog(commands.Cog):
             else:
                 await ctx.send("This is not a language")
 
-    async def get_lang(self, ctx):
-        try:
-            lang = await self.bot.db.fetch("SELECT lang FROM guild_prefixes WHERE guild_id=$1", ctx.guild.id)
-            lang = lang[0]['lang']
-        except Exception as e:
-            lang = 'en'
-        if lang == None:
-            lang = 'en'
-        else:
-            lang = lang
-        return lang
+
     @commands.command()
     async def cooldown_embed(self, ctx):
         lang = await self.get_lang(ctx)
