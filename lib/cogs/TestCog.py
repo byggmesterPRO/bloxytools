@@ -13,28 +13,7 @@ from lib.Functions import CommandProcess as cp
 class TestCog(commands.Cog):
     def __init__(self, bot):
         self.bot=bot        
-    @commands.command()
-    async def setlang(self, ctx, arg):
-        arg = arg.lower()
-        languages = ['en', 'no']
-        IF_GUILD = await self.bot.db.fetch("SELECT guild_id FROM guild_prefixes WHERE guild_id=$1;", ctx.guild.id)
-        if arg in languages:
-            ARG_BOOL = True
-        else:
-            ARG_BOOL = False
-        if IF_GUILD:
-            if ARG_BOOL:
-                await self.bot.db.execute("""
-                UPDATE guild_prefixes SET lang=$1 WHERE guild_id=$2""", arg, ctx.guild.id)
-                await ctx.send("Changed language!")
-            else:
-                await ctx.send("This is not a language!")
-        else:
-            if ARG_BOOL:
-                await self.bot.db.execute("INSERT INTO guild_prefixes(guild_id, made_at, lang) VALUES($1, $2, $3);", ctx.guild.id, datetime.today(), arg)
-                await ctx.send("Changed language!")
-            else:
-                await ctx.send("This is not a language")
+    
 
 
     @commands.command()

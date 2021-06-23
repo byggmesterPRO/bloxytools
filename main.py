@@ -34,25 +34,7 @@ async def create_db_pool():
     print("Started database connection")
 
 
-
-
-#Get's the prefix of the current server using their ID, this will default to ! unless they have changed their prefix
 @AsyncLRU(maxsize=512)
-async def get_prefixDict():
-    fetched = await bot.db.fetch("SELECT guild_id, guild_prefix FROM guild_prefixes;")
-    processedDict = {}
-    for _ in range(len(fetched)):
-        processedDict.update({str(fetched[_]['guild_id']) : str(fetched[_]['guild_prefix'])})
-    with open("lib/json/guild_prefixes.json", "r") as f:
-        guild_prefixes = json.load(f)
-    guild_prefixes.clear()
-    with open("lib/json/guild_prefixes.json", "w") as f:
-        dump = json.dumps(processedDict)
-
-    return processedDict
-
-
-
 async def get_prefix(bot, message):
     try:
         GUILD_PREFIX = await bot.db.fetch("SELECT guild_prefix FROM guild_prefixes WHERE guild_id=$1;", message.guild.id)
@@ -118,7 +100,7 @@ def get_guildCount():
 
 @tasks.loop(seconds=60.1)
 async def change_pr():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="DM for support!"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="dm for support!"))
     await asyncio.sleep(15)
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="do bt!votecheck"))
     await asyncio.sleep(15)
@@ -127,8 +109,11 @@ async def change_pr():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
     await asyncio.sleep(15)
 
+
+
+
 #Run Connections/API's etc.
 loop.run_until_complete(create_db_pool())
 clear_today.start()
-TOKEN = config['token']
+TOKEN = config['token2']
 bot.run(TOKEN)

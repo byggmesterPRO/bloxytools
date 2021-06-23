@@ -8,7 +8,7 @@ from lib.Functions import CommandProcess as cp
 from datetime import date
 from discord.ext import commands
 
-RANDOMWORDS = ['dino', 'orange', 'yellow', 'purple', 'green', 'red']
+RANDOMWORDS = ['dino', 'orange', 'yellow', 'purple', 'green', 'red', 'roblox']
 RANDOMWORDS2 = ['or', 'and']
 def randomString():
     string1 = ""
@@ -95,7 +95,19 @@ class Verification(commands.Cog):
                     await message.edit(content="❌ Cancelled verification!")
         else:
             
-            await ctx.send("You are verified")
+            await ctx.send("You are verified! If you wish to change account or unverify type bt!unverify!")
+
+    @commands.command()
+    @commands.cooldown(1.0, 20.0, commands.BucketType.user)
+    async def getroles(self, ctx):
+        await cp.process_command(ctx)
+        verified = await self.bot.db.fetchrow("SELECT discord_id FROM user_data WHERE discord_id=$1;", ctx.author.id)
+        if not verified:
+            await self.verify.callback(self, ctx)
+            return
+        
+
+
     @commands.command()
     async def unverify(self, ctx, *, arg=None):
         await cp.process_command(ctx)

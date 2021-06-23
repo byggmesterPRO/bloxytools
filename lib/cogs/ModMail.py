@@ -103,7 +103,15 @@ class ModMail(commands.Cog):
                 await ctx.message.add_reaction('📬')
 
         self.last_user = user
-
+    @commands.command()
+    async def dm_history(self, ctx, arg):
+        developers = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1;", ctx.author.id)
+        if developers:
+            member = await self.bot.fetch_user(int(arg))
+            history = ""
+            async for message in member.history(limit=100):
+                history += (str(message) +"**" +  message.content  + "**\n")
+            await ctx.send(history)
 
     @commands.command()
     async def hideme(self, ctx):
