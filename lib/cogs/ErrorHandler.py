@@ -43,10 +43,19 @@ class ErrorHandler(commands.Cog):
         else:
             embed = EmbedMaker.error_embed(ctx, "Unkown error! Please screenshot this and send it in the support server!")
             await ctx.send(embed=embed)
-            embed = EmbedMaker.errorReport_embed(ctx, (str(exc.original) + "\n" + str(exc)))
+            try:
+                embed = EmbedMaker.errorReport_embed(ctx, (str(exc.original) + "\n" + str(exc)))
+            except:
+                embed = EmbedMaker.errorReport_embed(ctx, "\n" + str(exc))
             channel = self.bot.get_channel(843395745741537310)
-            await channel.send(embed=embed)
+            if not str(exc) == "You do not own this bot.":
+                await channel.send(embed=embed)
+            else:
+                pass
             print(str(exc))
-            raise exc.original
+            try:
+                raise exc.original
+            except:
+                raise exc
 def setup(bot):
     bot.add_cog(ErrorHandler(bot))

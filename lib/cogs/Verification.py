@@ -28,7 +28,6 @@ class Verification(commands.Cog):
     @commands.cooldown(1.0, 10.0, commands.BucketType.user)
     async def verify(self, ctx, *, arg=None):
         await cp.process_command(ctx)
-        await cp.register_user(ctx)
         IF_DEVELOPER = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1", ctx.author.id)
         if IF_DEVELOPER[0]['discord_id']:
             arg = arg or ctx.author.id

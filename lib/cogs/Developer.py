@@ -43,7 +43,6 @@ class Developer(commands.Cog):
                 pass
             argumentForceError() 
     @commands.command()
-    @commands.is_owner()
     async def help_list(self, ctx):
         string1 = ""
         for i in self.bot.commands:

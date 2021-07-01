@@ -1,3 +1,4 @@
+from typing import List
 import discord
 import json
 import random
@@ -119,5 +120,33 @@ def errorReport_embed(ctx, error):
     embed = handle_embed(ctx, embed)
     return embed
 
-def help_embed(ctx):
-    embed = default_embed()
+#The data this embed receives = [roblox_id, roblox_name, roblox_displayName, roblox_description, created, days_ago, roblox_isBanned, roblox_friends, roblox_followings, roblox_followers]
+def user_embed(ctx, data):
+    if isinstance(data, list):
+        roblox_id = data[0]
+        username = data[1]
+        displayName = data[2]
+        description = data[3]
+        created = data[4]
+        days_ago = data[5]
+        isBanned = data[6]
+        friends = data[7]
+        followings = data[8]
+        followers = data[9]
+        badges = data[10]
+        profilePicture = data[11]
+        if isBanned:
+            isBanned = " | **User is banned from Roblox!**"
+        else:
+            isBanned = ""
+        embed = default_embed(ctx, f"Display name **{displayName}**\nAccount Created at **{created}** | **{days_ago}** days ago" + isBanned)
+        embed.add_field(name="Account name", value=f"[{username}](https://www.roblox.com/users/{roblox_id}/profile)", inline=True)
+        embed.add_field(name="Description", value=description, inline=False)
+        embed.add_field(name="Friends", value=friends, inline=True)
+        embed.add_field(name="Followers", value=followers, inline=True)
+        embed.add_field(name="Following", value=followings, inline=True)
+        embed.add_field(name="Badges", value=badges)
+        embed.set_thumbnail(url=profilePicture)
+    else:
+        embed = False
+    return embed

@@ -13,7 +13,10 @@ from cache import AsyncLRU
 #Opening Config.json for the configuration of the bot
 with open("lib/json/config.json", "r") as f:
     config = json.load(f)
-
+with open("lib/json/channels.json", "r") as f:
+    channels = json.load(f)
+with open("lib/json/var.json", "r") as f:
+    var = json.load(f)
 #Defining variables
 #Prefix/etc
 PREFIX = config["prefix"]
@@ -48,19 +51,14 @@ async def get_prefix(bot, message):
 
 #Defining bot
 #bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot', intents=intents)
-bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot')
-bot.remove_command('help')
+bot = commands.AutoShardedBot(command_prefix=get_prefix, description='Helper Bot', help_command=None)
 
 #Loading Cogs
-cogsToBeLoaded = ['ErrorHandler', 'Developer', 'ModMail', 'PointStore', 'Verification', 'Misc']
+cogsToBeLoaded = ['ErrorHandler', 'Developer', 'ModMail', 'PointStore', 'RobloxCommands', 'Misc']
 
 for f in cogsToBeLoaded:
-    try:
-        bot.load_extension(f'lib.cogs.{f}')
-    except:
-        print(f"Couldn't load {f} cog")
-    else:
-        print(f'Loaded {f} cog')
+    bot.load_extension(f'lib.cogs.{f}')
+    print(f'Loaded {f} cog')
 
 @bot.command()
 async def reload(ctx):
@@ -75,10 +73,7 @@ async def reload(ctx):
     await ctx.send("Unloaded all the cogs | Error: " + errorMessage)
     errorMessage = ''
     for cog in cogsToBeLoaded:
-        try:
-            bot.load_extension(f'lib.cogs.{cog}')
-        except:
-            errorMessage += f'{cog} failed to load\n'
+        bot.load_extension(f'lib.cogs.{cog}')
     await ctx.send("Loaded all the cogs | Error: " + errorMessage)
 
 
@@ -98,22 +93,23 @@ def get_guildCount():
         guild_count += 1
     return str(guild_count)
 
-@tasks.loop(seconds=60.1)
+@tasks.loop(seconds=30.1)
 async def change_pr():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="dm for support!"))
-    await asyncio.sleep(15)
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="do bt!votecheck"))
-    await asyncio.sleep(15)
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="remember to vote | bt!votecheck"))
     await asyncio.sleep(15)
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
     await asyncio.sleep(15)
 
 
+@bot.event
+async def on_shard_ready(shard_id):
+    activity_log = bot.get_channel(channels['activity_log'])
+    await activity_log.send("**SHARD_ID:** " + str(shard_id) + " | your **" + var['shards'][int(shard_id)] + "** Is ready!")
 
 
 #Run Connections/API's etc.
 loop.run_until_complete(create_db_pool())
 clear_today.start()
+change_pr.start()
 TOKEN = config['token2']
 bot.run(TOKEN)
