@@ -329,9 +329,9 @@ class RobloxCommands(commands.Cog):
                                     if str(groups[j]['group']['id']) == type_id:
                                         if_in_group = True
                                 if if_in_group:
-                                    result += f"**{i+1}.** ✅ **{users[i]}** / ID: `{user[0]}` is in group **{group_name}**\n\n"
+                                    result += f"**{i+1}.** ✅ **{user[1]}** / ID: `{user[0]}` is in group **{group_name}**\n\n"
                                 else:
-                                    result += f"**{i+1}.** ❌ **{users[i]}** / ID: `{user[0]}` is **NOT** in group **{group_name}**\n\n"
+                                    result += f"**{i+1}.** ❌ **{user[1]}** / ID: `{user[0]}` is **NOT** in group **{group_name}**\n\n"
                             else:
                                 result += f"**{i+1}.** ❌ Couldn't fetch **{users[i]}** / ID: `{user[0]}`\n\n"
                 await message.edit(content=result)
