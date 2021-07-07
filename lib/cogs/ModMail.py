@@ -18,7 +18,8 @@ from lib.styling import EmbedMaker
 #The Cog itself
 class ModMail(commands.Cog):
     def __init__(self, bot):
-        self.bot=bot        
+        self.bot=bot
+        self.last_user = None      
     @commands.Cog.listener("on_message")
     async def on_message(self, message):
         with open('lib/json/channels.json') as f:
@@ -75,7 +76,7 @@ class ModMail(commands.Cog):
             return ctx.send('Main Server Unavailable')
         else:
             if ctx.message.author.id in replace['replacements']:
-                author = main_guild.get_member(611912213778661409)
+                author = False
                 if not author:
                     author = self.bot.user
 
@@ -87,11 +88,8 @@ class ModMail(commands.Cog):
                 author = main_guild.get_member(ctx.message.author.id)
                 if not author:
                     author = self.bot.user
-        if ctx.author.id in replace["replacements"]:
-            author2 = main_guild.get_member(611912213778661409)
-        else:
-            author2 = ctx
-        embed = EmbedMaker.modmail_embed2(author2, author, msg)
+
+        embed = EmbedMaker.modmail_embed2(author, ctx, msg)
         try:
             await user.send(embed=embed)
         except:

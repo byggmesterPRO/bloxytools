@@ -87,7 +87,7 @@ def modmail_embed2(ctx, author, msg):
 
         embed.add_field(name="Sent from", value=f"**{ctx.author.display_name}** / {str(ctx.author.top_role)}")
     else:
-        embed = Embed(title=BLOXY_TITLE, description="", colour=ctx.author.color)
+        embed = Embed(title=BLOXY_TITLE, description="", colour=COLOR)
 
         embed.set_author(name="{} ({}#{})".format(author.display_name, author.name, author.discriminator),
                             icon_url=author.avatar_url)
@@ -102,7 +102,7 @@ def modmail_embed2(ctx, author, msg):
         if ctx.message.attachments:
             embed.add_field(name="Attachments", value=", ".join([i.url for i in ctx.message.attachments]))
 
-        embed.add_field(name="Sent from", value=f"**{author.display_name}** / {str(author.top_role)}")
+        embed.add_field(name="Sent from", value=f"**{author.display_name}**")
     return embed
 
 def pointStore_embed(ctx):

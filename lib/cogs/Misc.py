@@ -23,9 +23,12 @@ class Misc(commands.Cog):
         await ctx.send(embed=embed)
     @commands.command(aliases=['tools', 'cmds', 'commands'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
-    async def help(self, ctx, *, index):
+    async def help(self, ctx, *, index=None):
         await cp.process_command(ctx)
         embed = EmbedMaker.default_embed(ctx)
+        embed.add_field(name="Roblox Commands", value="`user` - This command displays information about a Roblox user \n`randomuser` - This command displays a random user from Roblox!\n`age` - This command displays a more accurate representation of age on a Roblox user\n`game` - This command doesn't work right now.\n")
+        embed.add_field(name="Misc commands", value=" `changeprefix` - This command lets you change prefix for the guild as long as you got admin perms\n`prefix` - This command lets you know what prefix you have in your server \n`language` - Tells you what language this bot was made in!\n`ping` - pong\n`invite` - If you want to invite bloxy tools use this command!\n`changelog` - Show recent updates and fixes to the bot!\n`credits` - This displays the owner and creator of this bot.")
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
@@ -73,7 +76,7 @@ class Misc(commands.Cog):
             await ctx.send("This is too long! Max length of a prefix is __*6*__")
             return
         if prefix == "!":
-            await self.bot.db.execute("DELETE guild_prefixes WHERE guild_id=$1", ctx.guild.id)
+            await self.bot.db.execute("DELETE FROM guild_prefixes WHERE guild_id=$1;", ctx.guild.id)
         if not check_prefix:
             await self.bot.db.execute("INSERT INTO guild_prefixes(guild_id, guild_prefix, made_at) VALUES($1, $2, $3);", ctx.guild.id, prefix, date.today())
         else:

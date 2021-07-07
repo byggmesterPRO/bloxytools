@@ -7,8 +7,11 @@ intents.members = True
 """
 import json
 import asyncpg
+from datetime import datetime as date
 from discord.ext import commands, tasks
 from cache import AsyncLRU
+def bloxy_print(message):
+    print("[ {}  Bloxy Console ] {}".format(date.today().strftime("%d/%m/%Y %H:%M:%S"), message))
 
 #Opening Config.json for the configuration of the bot
 with open("lib/json/config.json", "r") as f:
@@ -27,24 +30,24 @@ DB_PW = config['db_pw']
 DBL_TOKEN = config['token2']
 loop = asyncio.get_event_loop()
 
+
 #Printing to verify for me ;)
-print("Current UNIVERSAL_PREFIX is: {}".format(UNIVERSAL_PREFIX))
-print("Current default PREFIX is: {}".format(PREFIX))
+bloxy_print("Current UNIVERSAL_PREFIX is: {}".format(UNIVERSAL_PREFIX))
+bloxy_print("Current default PREFIX is: {}".format(PREFIX))
 
 #Create the database Connection
 async def create_db_pool():
     bot.db = await asyncpg.create_pool(database="einar", user="einar", host=HOST, password=DB_PW)
-    print("Started database connection")
+    bloxy_print("Started database connection")
 
 
-@AsyncLRU(maxsize=512)
 async def get_prefix(bot, message):
     try:
-        GUILD_PREFIX = await bot.db.fetch("SELECT guild_prefix FROM guild_prefixes WHERE guild_id=$1;", message.guild.id)
+        GUILD_PREFIX = await bot.db.fetchrow("SELECT guild_prefix FROM guild_prefixes WHERE guild_id=$1;", message.guild.id)
     except:
         GUILD_PREFIX = None
     if GUILD_PREFIX:
-        prefix = [GUILD_PREFIX[0]['guild_prefix'], UNIVERSAL_PREFIX]
+        prefix = [GUILD_PREFIX['guild_prefix'], UNIVERSAL_PREFIX]
     else:
         prefix = [PREFIX, UNIVERSAL_PREFIX]
     return commands.when_mentioned_or(*prefix)(bot, message)
@@ -54,11 +57,11 @@ async def get_prefix(bot, message):
 bot = commands.AutoShardedBot(command_prefix=get_prefix, description='Helper Bot', help_command=None)
 
 #Loading Cogs
-cogsToBeLoaded = ['ErrorHandler', 'Developer', 'ModMail', 'PointStore', 'RobloxCommands', 'Misc']
+cogsToBeLoaded = ['ErrorHandler', 'Developer', 'PointStore', 'RobloxCommands', 'Misc']
 
 for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
-    print(f'Loaded {f} cog')
+    bloxy_print(f'Loaded {f} cog')
 
 @bot.command()
 async def reload(ctx):
@@ -93,23 +96,18 @@ def get_guildCount():
         guild_count += 1
     return str(guild_count)
 
-@tasks.loop(seconds=30.1)
-async def change_pr():
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="dm for support!"))
-    await asyncio.sleep(15)
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
-    await asyncio.sleep(15)
+
 
 
 @bot.event
 async def on_shard_ready(shard_id):
     activity_log = bot.get_channel(channels['activity_log'])
     await activity_log.send("**SHARD_ID:** " + str(shard_id) + " | your **" + var['shards'][int(shard_id)] + "** Is ready!")
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
 
 
 #Run Connections/API's etc.
 loop.run_until_complete(create_db_pool())
 clear_today.start()
-change_pr.start()
-TOKEN = config['token2']
+TOKEN = config['token']
 bot.run(TOKEN)
