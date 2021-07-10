@@ -30,7 +30,17 @@ DB_PW = config['db_pw']
 DBL_TOKEN = config['token2']
 loop = asyncio.get_event_loop()
 
+print("""
 
+.______    __        ______   ___   ___ ____    ____   .___________.  ______     ______    __          _______.
+|   _  \  |  |      /  __  \  \  \ /  / \   \  /   /   |           | /  __  \   /  __  \  |  |        /       |
+|  |_)  | |  |     |  |  |  |  \  V  /   \   \/   /    `---|  |----`|  |  |  | |  |  |  | |  |       |   (----`
+|   _  <  |  |     |  |  |  |   >   <     \_    _/         |  |     |  |  |  | |  |  |  | |  |        \   \    
+|  |_)  | |  `----.|  `--'  |  /  .  \      |  |           |  |     |  `--'  | |  `--'  | |  `----.----)   |   
+|______/  |_______| \______/  /__/ \__\     |__|           |__|      \______/   \______/  |_______|_______/    
+                                                                                                               
+
+""")
 #Printing to verify for me ;)
 bloxy_print("Current UNIVERSAL_PREFIX is: {}".format(UNIVERSAL_PREFIX))
 bloxy_print("Current default PREFIX is: {}".format(PREFIX))
@@ -63,6 +73,7 @@ for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
     bloxy_print(f'Loaded {f} cog')
 
+
 @bot.command()
 async def reload(ctx):
     if ctx.author.id != 257073333273624576:
@@ -73,11 +84,11 @@ async def reload(ctx):
             bot.unload_extension(f'lib.cogs.{cog}')
         except:
             errorMessage += f'{cog} failed to unload\n'
-    await ctx.send("Unloaded all the cogs | Error: " + errorMessage)
+    await ctx.send("Unloaded all the cogs... "+ errorMessage)
     errorMessage = ''
     for cog in cogsToBeLoaded:
         bot.load_extension(f'lib.cogs.{cog}')
-    await ctx.send("Loaded all the cogs | Error: " + errorMessage)
+    await ctx.send("Loaded all the cogs..." + errorMessage)
 
 
 
@@ -96,18 +107,20 @@ def get_guildCount():
         guild_count += 1
     return str(guild_count)
 
-
+@tasks.loop(seconds=60)
+async def change_pr():
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
 
 
 @bot.event
 async def on_shard_ready(shard_id):
-    activity_log = bot.get_channel(channels['activity_log'])
-    await activity_log.send("**SHARD_ID:** " + str(shard_id) + " | your **" + var['shards'][int(shard_id)] + "** Is ready!")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
+    bloxy_print("SHARD_ID: " + str(shard_id) + " | your " + var['shards'][int(shard_id)] + " Is ready!")
+
 
 
 #Run Connections/API's etc.
 loop.run_until_complete(create_db_pool())
 clear_today.start()
+bot.loop.create_task(change_pr())
 TOKEN = config['token']
 bot.run(TOKEN)

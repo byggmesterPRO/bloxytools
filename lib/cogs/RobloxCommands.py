@@ -239,7 +239,7 @@ class RobloxCommands(commands.Cog):
     async def randomuser(self, ctx):
         await self.user.callback(self, ctx, value=("id:" + str(random.randint(1,2040000000))))
     
-    @commands.command(aliases=['g'])
+    @commands.command(aliases=['ga'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def game(self, ctx, *, game_name):
         game = await fetch_game(ctx, game_name)
@@ -250,7 +250,7 @@ class RobloxCommands(commands.Cog):
             message = await ctx.send(embed=game[0])
             def check(m):
                 try:
-                    if ctx.channel == m.channel and m.author == ctx.author and isinstance(int(m.content), int):
+                    if ctx.channel == m.channel and m.author == ctx.author and isinstance(int(m.content), int) and m.content in ["1","2","3","4","5"]:
                         return True
                     else:
                         return False

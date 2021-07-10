@@ -19,14 +19,14 @@ class Misc(commands.Cog):
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def invite(self, ctx):
         await cp.process_command(ctx)
-        embed = EmbedMaker.default_embed(ctx, "If you want to invite me to your server click this link; [invite Bloxy Tools]()")
+        embed = EmbedMaker.default_embed(ctx, "If you want to invite me to your server click this link; [invite Bloxy Tools](https://discord.com/oauth2/authorize?client_id=789911633320345620&scope=bot&permissions=8)")
         await ctx.send(embed=embed)
     @commands.command(aliases=['tools', 'cmds', 'commands'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def help(self, ctx, *, index=None):
         await cp.process_command(ctx)
         embed = EmbedMaker.default_embed(ctx)
-        embed.add_field(name="Roblox Commands", value="`user` - This command displays information about a Roblox user \n`randomuser` - This command displays a random user from Roblox!\n`age` - This command displays a more accurate representation of age on a Roblox user\n`game` - This command doesn't work right now.\n")
+        embed.add_field(name="Roblox Commands", value="`user` - This command displays information about a Roblox user \n`randomuser` - This command displays a random user from Roblox!\n`age` - This command displays a more accurate representation of age on a Roblox user\n`game` - This displays information about a game, remember to choose a number between 1 and 5!\n")
         embed.add_field(name="Misc commands", value=" `changeprefix` - This command lets you change prefix for the guild as long as you got admin perms\n`prefix` - This command lets you know what prefix you have in your server \n`language` - Tells you what language this bot was made in!\n`ping` - pong\n`invite` - If you want to invite bloxy tools use this command!\n`changelog` - Show recent updates and fixes to the bot!\n`credits` - This displays the owner and creator of this bot.")
         await ctx.send(embed=embed)
 
@@ -60,6 +60,12 @@ class Misc(commands.Cog):
         embed = EmbedMaker.default_embed(ctx, "This is the statistics for commands etc.")
         for i, j in stats.items():
             embed.add_field(name=str(i), value=str(stats[i]))
+        guild_count = 0
+        member_count = 0
+        for guild in self.bot.guilds:
+            member_count += guild.member_count
+            guild_count += 1
+        embed.add_field(name="Guilds and Members", value=f"Total Members = {member_count} | Total Guilds = {guild_count}")
         await ctx.send(embed=embed)
 
     @commands.command()
