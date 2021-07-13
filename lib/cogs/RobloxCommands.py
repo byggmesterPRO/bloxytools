@@ -122,6 +122,8 @@ async def fetch_userinfo(value):
             response = await resp.json()
             if not error:
                 profilePicture = response['data'][0]['imageUrl']
+                if profilePicture == None:
+                    profilePicture = "https://cdn.discordapp.com/attachments/843395793540218901/859724991197347880/ErrorRed.png"
             else:
                 profilePicture = "https://cdn.discordapp.com/attachments/843395793540218901/859724991197347880/ErrorRed.png"
         async with session.get(f"https://friends.roblox.com/v1/users/{roblox_id}/friends/count") as resp:
@@ -237,7 +239,7 @@ class RobloxCommands(commands.Cog):
     @commands.command(aliases=['ru'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def randomuser(self, ctx):
-        await self.user.callback(self, ctx, value=("id:" + str(random.randint(1,2040000000))))
+        await self.user.callback(self, ctx, username_or_id=("id:" + str(random.randint(1,2040000000))))
     
     @commands.command(aliases=['ga'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)

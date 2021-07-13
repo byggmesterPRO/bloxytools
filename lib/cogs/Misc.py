@@ -54,7 +54,7 @@ class Misc(commands.Cog):
     
     @commands.command()
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
-    async def stats_test(self, ctx):
+    async def stats(self, ctx):
         with open("lib/json/stats.json", "r") as f:
             stats = json.load(f)
         embed = EmbedMaker.default_embed(ctx, "This is the statistics for commands etc.")

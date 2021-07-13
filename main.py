@@ -28,7 +28,7 @@ UNIVERSAL_PREFIX = config["universal_prefix"]
 HOST = config['host']
 DB_PW = config['db_pw']
 DBL_TOKEN = config['token2']
-loop = asyncio.get_event_loop()
+loop2 = asyncio.get_event_loop()
 
 print("""
 
@@ -107,7 +107,7 @@ def get_guildCount():
         guild_count += 1
     return str(guild_count)
 
-@tasks.loop(seconds=60)
+@tasks.loop(seconds=60.1)
 async def change_pr():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
 
@@ -119,8 +119,9 @@ async def on_shard_ready(shard_id):
 
 
 #Run Connections/API's etc.
-loop.run_until_complete(create_db_pool())
+
+loop2.run_until_complete(create_db_pool())
 clear_today.start()
+TOKEN = config['token2']
 bot.loop.create_task(change_pr())
-TOKEN = config['token']
 bot.run(TOKEN)
