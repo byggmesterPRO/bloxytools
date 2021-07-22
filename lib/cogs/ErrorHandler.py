@@ -48,7 +48,7 @@ class ErrorHandler(commands.Cog):
         elif isinstance(exc, MissingRequiredArgument):
             embed = EmbedMaker.default_embed(ctx)
             error = str(exc).split(' ', 1)[0]
-            embed.add_field(name="Missing Required Argument", value=f"```diff\n- Missing required argument <{error}>\n+ {UNIVERSAL_PREFIX}{ctx.command.name} <{error}>\n``` ")
+            embed.add_field(name="Missing Required Argument", value=f"```diff\n- Missing required argument <{error}>\n+ {UNIVERSAL_PREFIX}{ctx.command.qualified_name} <{error}>\n``` ")
             await ctx.send(embed=embed)
         elif isinstance(exc, CommandOnCooldown):
             embed = EmbedMaker.cooldown_embed(ctx, f"You may retry after {exc.retry_after:,.2f} seconds")

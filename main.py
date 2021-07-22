@@ -119,7 +119,7 @@ async def on_shard_ready(shard_id):
 
 
 #Run Connections/API's etc.
-
+change_pr.start()
 loop2.run_until_complete(create_db_pool())
 clear_today.start()
 TOKEN = config['token2']

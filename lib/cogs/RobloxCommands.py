@@ -244,6 +244,7 @@ class RobloxCommands(commands.Cog):
     @commands.command(aliases=['ga'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def game(self, ctx, *, game_name):
+        await cp.process_command(ctx)
         game = await fetch_game(ctx, game_name)
         if not game:
             await ctx.send("Couldn't find this game!")
@@ -291,54 +292,69 @@ class RobloxCommands(commands.Cog):
                     embed.add_field(name='Genre', value=game[2]['data'][0]['genre'], inline=False)
                 await message.edit(embed=embed)
 
-    @commands.command(aliases=['ch'])
+    @commands.group(aliases=['ch'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
-    async def check(self, ctx, type, type_id, *, users):
+    async def check(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("❌ You need to choose a type! Possible types are `group, audio`!")
+        await cp.process_command(ctx)
+    
+    @check.command()
+    async def group(self, ctx, group_id, *, users):
         message = await ctx.send("Checking users...")
-        types = ['group']
-        types_without_list = str(types).replace("]", "").replace("[", "").replace("'", "")
-        if not type.lower() in types:
-            await message.edit(content=f"❌ I don't think that's the right type! Please try one of these `{types_without_list}`")
-            return
-        if type.lower() == 'group':
-
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f'https://groups.roblox.com/v1/groups/{type_id}') as resp:
-                    error = await check_error(resp.status)
-                    group_data = await resp.json(encoding="utf-8-sig")
-                    if error:
-                        await message.edit(content="❌ Couldn't find this group id.")
-                        return
-                    else:
-                        group_name = group_data['name']
-                users = users.replace(" ", "").split(",")
-                if len(users) > 15:
-                    await message.edit(content="❌ That's too many users!")
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'https://groups.roblox.com/v1/groups/{group_id}') as resp:
+                error = await check_error(resp.status)
+                group_data = await resp.json(encoding="utf-8-sig")
+                if error:
+                    await message.edit(content="❌ Couldn't find this group id.")
                     return
-                result = ""
-                for i in range(len(users)):
-                    user = await fetch_id(users[i])
-                    if not user:
-                        result += f"❌ Couldn't fetch **{users[i]}**\n\n"
-                    else:
-                        async with session.get(f'https://groups.roblox.com/v2/users/{user[0]}/groups/roles') as resp:
-                            error = await check_error(resp.status)
-                            response = await resp.json()
-                            if not error:
-                                if_in_group = False
-                                groups = response['data']
-                                for j in range(len(groups)):
-                                    if str(groups[j]['group']['id']) == type_id:
-                                        if_in_group = True
-                                if if_in_group:
-                                    result += f"**{i+1}.** ✅ **{user[1]}** / ID: `{user[0]}` is in group **{group_name}**\n\n"
-                                else:
-                                    result += f"**{i+1}.** ❌ **{user[1]}** / ID: `{user[0]}` is **NOT** in group **{group_name}**\n\n"
+                else:
+                    group_name = group_data['name']
+            users = users.replace(" ", "").split(",")
+            if len(users) > 15:
+                await message.edit(content="❌ That's too many users!")
+                return
+            result = ""
+            for i in range(len(users)):
+                user = await fetch_id(users[i])
+                if not user:
+                    result += f"❌ Couldn't fetch **{users[i]}**\n\n"
+                else:
+                    async with session.get(f'https://groups.roblox.com/v2/users/{user[0]}/groups/roles') as resp:
+                        error = await check_error(resp.status)
+                        response = await resp.json()
+                        if not error:
+                            if_in_group = False
+                            groups = response['data']
+                            for j in range(len(groups)):
+                                if str(groups[j]['group']['id']) == group_id:
+                                    if_in_group = True
+                            if if_in_group:
+                                result += f"**{i+1}.** ✅ **{user[1]}** / ID: `{user[0]}` is in group **{group_name}**\n\n"
                             else:
-                                result += f"**{i+1}.** ❌ Couldn't fetch **{users[i]}** / ID: `{user[0]}`\n\n"
-                await message.edit(content=result)
+                                result += f"**{i+1}.** ❌ **{user[1]}** / ID: `{user[0]}` is **NOT** in group **{group_name}**\n\n"
+                        else:
+                            result += f"**{i+1}.** ❌ Couldn't fetch **{users[i]}** / ID: `{user[0]}`\n\n"
+            await message.edit(content=result)
 
-        
+    @check.command()
+    async def audio(self, ctx, *, audio_ids):
+        message = await ctx.send("Checking audio_ids...")
+        audio_ids = audio_ids.lower().replace(" ", "").split(",")
+        result = "Please remember that this is only checking if it exists, nothing more nothing less. *This is also experimental and might say it exists or doesn't even though it exists*\n\n"
+        if len(audio_ids) > 25:
+            await message.edit(content="❌ That's too many audio ids!")
+            return
+        async with aiohttp.ClientSession() as session:
+            for i in range(len(audio_ids)):
+                async with session.get(f"https://web.roblox.com/library/{i}/unknown?Category=Audio") as resp:
+                    error = await check_error(resp.status)
+                    if error:
+                        result += (f"**{i+1}.** ❌ ID: {audio_ids[i]} Couldn't find this audio.\n\n")
+                    else:
+                        result += (f"**{i+1}.** ✅ ID: {audio_ids[i]} Found find this audio.\n\n")
+        await message.edit(content=result)
 
 
 
