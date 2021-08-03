@@ -63,6 +63,7 @@ async def fetch_game(ctx, game):
 
 #Fetching the roblox_id and username of a user based on their username or id.
 async def fetch_id(value):
+    value = value.replace(" ","%20")
     async with aiohttp.ClientSession() as session:
         if value.startswith("id:"):
             value = value.replace("id:", "")
@@ -185,6 +186,23 @@ async def fetch_userinfo(value):
 class RobloxCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+    @commands.command(aliases=['qid', 'id'])
+    @commands.cooldown(1.0, 5.0, commands.BucketType.user)
+    async def quickid(self, ctx, *, username_or_id):
+        await cp.process_command(ctx)
+        result = ""
+        message = await ctx.send("Fetching user ids...")
+        users = username_or_id.replace(" ", "").split(",")
+        if len(users) > 25:
+            await message.edit(content="❌ That's too many users! Max is __25__!")
+            return
+        for i in range(len(users)):
+            user = await fetch_id(users[i])
+            if not user:
+                result += f"**{i+1}.** ❌ Couldn't fetch **{users[i]}**\n\n"
+            else:
+                result += f"**{i+1}.** ✅ **{user[1]}** / ID: `{user[0]}` / DisplayName: {user[5]}**\n\n"
+        await message.edit(content=result)
     @commands.command(aliases=['u', 'profile'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def user(self, ctx, *, username_or_id):

@@ -107,7 +107,7 @@ def get_guildCount():
         guild_count += 1
     return str(guild_count)
 
-@tasks.loop(seconds=60.1)
+@tasks.loop(seconds=60.0)
 async def change_pr():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="{} Servers | bt!help".format(get_guildCount())))
 
