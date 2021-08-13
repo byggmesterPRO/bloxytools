@@ -55,52 +55,52 @@ def cooldown_embed(ctx, desc=None):
 
 
 
-def modmail_embed(message, author, content=None):
+def modmail_embed(message_object,message, author,):
     embed = Embed(title=BLOXY_TITLE, timestamp=datetime.datetime.utcnow(), color=COLOR)
     embed.set_author(name="{} ({}#{})".format(author.display_name, author.name, author.discriminator),
                     icon_url=author.avatar_url)
-    embed.timestamp = message.created_at
+    embed.timestamp = message_object.created_at
     embed.set_footer(text='User ID: {}'.format(author.id))
-    embed.color = author.color
+    embed.color = COLOR
 
-    embed.add_field(name="Message", value=content[:1000] or "blank")
-    if len(content[1000:]) > 0:
-        embed.add_field(name="(Continued)", value=content[1000:])
+    embed.add_field(name="Message", value=message[:1000] or "blank")
+    if len(message[1000:]) > 0:
+        embed.add_field(name="(Continued)", value=message[1000:])
     return embed
 
-def modmail_embed2(ctx, author, msg):
+def modmail_embed2(message_object, author, msg):
     if isinstance(author, commands.Context):
-        embed = Embed(title=BLOXY_TITLE, description="", colour=ctx.author.color)
-
-        embed.set_author(name="{} ({}#{})".format(author.display_name, ctx.author.name, ctx.author.discriminator),
-                            icon_url=author.avatar_url)
-
-
-        embed.timestamp = ctx.message.created_at
-
-        embed.add_field(name="Message", value=msg[:1000] or "blank", inline=False)
-        if len(msg) > 1000:
-            embed.add_field(name="(Continued)", value=msg[1000:], inline=False)
-
-        if ctx.message.attachments:
-            embed.add_field(name="Attachments", value=", ".join([i.url for i in ctx.message.attachments]))
-
-        embed.add_field(name="Sent from", value=f"**{ctx.author.display_name}** / {str(ctx.author.top_role)}")
-    else:
-        embed = Embed(title=BLOXY_TITLE, description="", colour=COLOR)
+        embed = Embed(title=BLOXY_TITLE, description="", colour=author.color)
 
         embed.set_author(name="{} ({}#{})".format(author.display_name, author.name, author.discriminator),
                             icon_url=author.avatar_url)
 
 
-        embed.timestamp = ctx.message.created_at
+        embed.timestamp = message_object.message.created_at
 
         embed.add_field(name="Message", value=msg[:1000] or "blank", inline=False)
         if len(msg) > 1000:
             embed.add_field(name="(Continued)", value=msg[1000:], inline=False)
 
-        if ctx.message.attachments:
-            embed.add_field(name="Attachments", value=", ".join([i.url for i in ctx.message.attachments]))
+        if message_object.attachments:
+            embed.add_field(name="Attachments", value=", ".join([i.url for i in message_object.attachments]))
+
+        embed.add_field(name="Sent from", value=f"**{author.display_name}** / {str(author.top_role)}")
+    else:
+        embed = Embed(title=BLOXY_TITLE, description="", colour=author.color)
+
+        embed.set_author(name="{} ({}#{})".format(author.display_name, author.name, author.discriminator),
+                            icon_url=author.avatar_url)
+
+
+        embed.timestamp = message_object.created_at
+
+        embed.add_field(name="Message", value=msg[:1000] or "blank", inline=False)
+        if len(msg) > 1000:
+            embed.add_field(name="(Continued)", value=msg[1000:], inline=False)
+
+        if message_object.attachments:
+            embed.add_field(name="Attachments", value=", ".join([i.url for i in message_object.attachments]))
 
         embed.add_field(name="Sent from", value=f"**{author.display_name}**")
     return embed
@@ -110,7 +110,7 @@ def pointStore_embed(ctx):
         pointData = json.load(f)
     embed = default_embed(ctx, f"This is the store, this is where you may purchase roles and other perks that will come along with Bloxy Tools\n\nYou are able to claim these roles in the [support server!]({SUPPORTSERVER})")
     for i in pointData['store']:
-        embed.add_field(name=pointData["store"][i]['title'], value=f"```\nPrice: {str(pointData['store'][i]['price'])} points.\nDescription:{pointData['store'][i]['description']}\nID: '{pointData['store'][i]['id']}'```", inline=False)
+        embed.add_field(name=pointData["store"][i]['title'], value=f"```\nPrice: {str(pointData['store'][i]['price'])} points.\nDescription: {pointData['store'][i]['description']}\nID: {pointData['store'][i]['id']}```", inline=False)
     return embed
 
 def errorReport_embed(ctx, error):

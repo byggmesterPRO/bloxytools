@@ -24,7 +24,7 @@
             "description": "N/A",
             "price": 5000
         },
-        "Insanevoter": {
+        "insanevoter": {
             "title": "Insane Voter",
             "id" : "insanevoter",
             "description": "N/A",

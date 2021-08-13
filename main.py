@@ -1,10 +1,10 @@
 #Importing Packages
 import asyncio
 import discord
-"""
+
 intents = discord.Intents.default()
 intents.members = True
-"""
+
 import json
 import asyncpg
 from datetime import datetime as date
@@ -64,10 +64,10 @@ async def get_prefix(bot, message):
 
 #Defining bot
 #bot = commands.Bot(command_prefix=get_prefix, description='Helper Bot', intents=intents)
-bot = commands.AutoShardedBot(command_prefix=get_prefix, description='Helper Bot', help_command=None)
+bot = commands.AutoShardedBot(command_prefix=get_prefix, description='Helper Bot', help_command=None, intents=intents)
 
 #Loading Cogs
-cogsToBeLoaded = ['ErrorHandler', 'Developer', 'PointStore', 'RobloxCommands', 'Misc']
+cogsToBeLoaded = ['ErrorHandler', 'Developer', 'PointStore', 'RobloxCommands', 'Misc', 'ModMail']
 
 for f in cogsToBeLoaded:
     bot.load_extension(f'lib.cogs.{f}')
@@ -122,6 +122,6 @@ async def on_shard_ready(shard_id):
 change_pr.start()
 loop2.run_until_complete(create_db_pool())
 clear_today.start()
-TOKEN = config['token2']
+TOKEN = config['token']
 bot.loop.create_task(change_pr())
 bot.run(TOKEN)

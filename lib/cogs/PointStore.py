@@ -65,6 +65,7 @@ class PointStore(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def buy(self, ctx, *, item):
+        item = item.lower().replace(" ", "")
         if item in storeIds:
             await cp.process_command(ctx)
             l = [storeIds.index(i) for i in storeIds if item in i]
@@ -107,7 +108,8 @@ class PointStore(commands.Cog):
                     await ctx.send("❌, Cancelled!")
                 else:
                     await ctx.send("weird " + reaction)
-        
+        else:
+            await ctx.send("That's not an item, try using their id!")
     @commands.command()
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def leaderboard(self, ctx, msg=None):

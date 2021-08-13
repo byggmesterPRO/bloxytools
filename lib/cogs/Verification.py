@@ -28,8 +28,8 @@ class Verification(commands.Cog):
     @commands.cooldown(1.0, 10.0, commands.BucketType.user)
     async def verify(self, ctx, *, arg=None):
         await cp.process_command(ctx)
-        IF_DEVELOPER = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1", ctx.author.id)
-        if IF_DEVELOPER[0]['discord_id']:
+        IF_DEVELOPER = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1", ctx.author.id)
+        if IF_DEVELOPER['rank'] in [0,1]:
             arg = arg or ctx.author.id
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
         else:

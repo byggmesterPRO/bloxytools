@@ -1,196 +1,120 @@
-#Importing stuff
+
 import discord
-import asyncpg
 import json
 import asyncio
-import datetime
+from lib.Functions import CommandProcess as cp 
 
 from datetime import date
-from discord.ext import commands
 from lib.styling import EmbedMaker
+from discord.ext import commands
+from discord.ext import commands
+from asyncio import sleep
 
+from discord.ext.commands.core import check
 
-
-
-
-
-
-#The Cog itself
-class ModMail(commands.Cog):
+with open("lib/json/channels.json", "r") as f:
+    channel = json.load(f)
+main_guild = channel['server']
+class Modmail(commands.Cog):
     def __init__(self, bot):
-        self.bot=bot
-        self.last_user = None      
+        self.bot = bot
     @commands.Cog.listener("on_message")
     async def on_message(self, message):
-        with open('lib/json/channels.json') as f:
-            config = json.load(f)
-        if await self.bot.db.fetch("SELECT discord_id FROM user_blacklist WHERE discord_id=$1;", message.author.id):
+        if message.content.startswith("bt!") or message.content.startswith("!"):
             return
-        else:
-            if not isinstance(message.channel, discord.DMChannel) or message.author.id == self.bot.user.id:
-                # not a DM, or it's just the bot itself
-                return
-            channel = self.bot.get_channel(config["mail_channel"])
-            if not channel:
-                print("Mail channel not found! Reconfigure bot!")
-
-            main_guild = self.bot.get_guild(config["server"])
-            if not main_guild:
-                print("Main Server ID is incorrect!  Reconfigure bot!")
-                author = message.author
-            else:
-                author = main_guild.get_member(message.author.id)
-                if not author:
-                    author = message.author
-
-            content = message.clean_content
-
-
-            embed = EmbedMaker.modmail_embed(message, author, content)
- 
-            await channel.send(content=f"{message.author.id}", embed=embed)
-
-            try:
-                await message.add_reaction('📬')
-            except discord.ext.commands.errors.CommandInvokeError:
-                await message.channel.send('📬')
-
-            self.last_user = author
-
-        async def _shutdown(self):
-            await self.bot.logout()
-            await self.bot.close()
-            self.bot.loop.stop()
-
-    @commands.command()
-    async def dm(self, ctx, user : discord.User, *, msg):
-        with open("lib/json/channels.json", "r") as f:
-            channel = json.load(f)
-        if ctx.channel.id != channel["mail_channel"]:
-            return
-        with open("lib/json/var.json", "r") as f:
-            replace = json.load(f)
-        main_guild = self.bot.get_guild(channel["server"])
-        if not main_guild:
-            print("Main Server ID is incorrect!  Reconfigure bot!")
-            return ctx.send('Main Server Unavailable')
-        else:
-            if ctx.message.author.id in replace['replacements']:
-                author = False
-                if not author:
-                    author = self.bot.user
-
-                try:
-                    await ctx.message.add_reaction('🕵️')
-                except:
-                    await ctx.send('🕵️')
-            else:
-                author = main_guild.get_member(ctx.message.author.id)
-                if not author:
-                    author = self.bot.user
-
-        embed = EmbedMaker.modmail_embed2(author, ctx, msg)
-        try:
+        ticketOpened = await self.bot.db.fetchrow("SELECT discord_id, channel_id FROM tickets WHERE channel_id=$1;", message.channel.id)
+        if ticketOpened and not message.author.id == self.bot.user.id:
+            embed = EmbedMaker.modmail_embed2(message, message.author, message.content)
+            user =  self.bot.get_user(ticketOpened['discord_id'])
             await user.send(embed=embed)
-        except:
-            await ctx.send("This user has blocked the bot or doesn't share a server.")
+            return
+        if not isinstance(message.channel, discord.DMChannel) or message.author.id == self.bot.user.id:
+            return
+        elif isinstance(message.channel, discord.DMChannel):
+            ticketOpened = await self.bot.db.fetchrow("SELECT discord_id, channel_id FROM tickets WHERE discord_id=$1;", message.author.id)
+        blacklisted = await self.bot.db.fetchrow("SELECT discord_id FROM user_blacklist WHERE discord_id=$1;", message.author.id)
+        if blacklisted:
+            return
+        guild = self.bot.get_guild(main_guild)
+        ticket_category = guild.get_channel(channel['ticket_category'])
+        if ticketOpened:
+            ticket = guild.get_channel(ticketOpened['channel_id'])
+            embed = EmbedMaker.modmail_embed(message,message.content, message.author)
+            await ticket.send(embed=embed)
+            return
+        embed = EmbedMaker.default_embed(message, "You are about to open a support ticket!\nIf you don't need help click ❌, otherwise click ✅.")
+        bot_message = await message.author.send(embed=embed)
+        def check(reaction, user):
+            return user == message.author and reaction.emoji in ['✅', '❌']
+        await bot_message.add_reaction(emoji="❌")
+        await bot_message.add_reaction(emoji="✅")
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+        except asyncio.TimeoutError:
+            pass
         else:
-            try:
-                await ctx.send("Message successfully sent!")
-            except:
-                await ctx.message.add_reaction('📬')
-
-        self.last_user = user
-    @commands.command()
-    async def dm_history(self, ctx, arg):
-        developers = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1;", ctx.author.id)
-        if developers:
-            member = await self.bot.fetch_user(int(arg))
-            history = ""
-            async for message in member.history(limit=100):
-                history += (str(message) +"**" +  message.content  + "**\n")
-            await ctx.send(history)
+            if str(reaction) == "✅":
+                await bot_message.delete()  
+                ticket = await ticket_category.create_text_channel(message.author.name + "-" + message.author.discriminator)
+                await ticket.send(message.author.name + "#" + message.author.discriminator + " opened a ticket and said\n```" + message.content + "\n```")
+                await message.author.send(embed=None, content="✅ Support ticket opened! You are now chatting with support!")
+                await self.bot.db.execute("INSERT INTO tickets(discord_id, channel_id) VALUES($1, $2);", message.author.id, ticket.id)
 
     @commands.command()
-    async def hideme(self, ctx):
-        with open("lib/json/channels.json", "r") as f:
-            channels = json.load(f)
-        if ctx.channel.id != channels['mail_channel']:
-            return
-        with open("lib/json/var.json", "r") as f:
-            modmail = json.load(f)
-        if ctx.author.id in modmail["replacements"]:
-            await ctx.send("You're already hidden! 🕵️")
-            return
-        modmail['replacements'] += [ctx.author.id]
-        with open("lib/json/var.json", "w") as f:
-            channels = json.dump(modmail, f)
-        await ctx.send("You're now hidden! 🕵️")
-
-    @commands.command()
-    async def unhideme(self, ctx):
-        with open("lib/json/channels.json", "r") as f:
-            channels = json.load(f)
-        if ctx.channel.id != channels['mail_channel']:
-            return
-        with open("lib/json/var.json", "r") as f:
-            modmail = json.load(f)
-        if ctx.author.id in modmail["replacements"]:
-            index = modmail["replacements"].index(ctx.author.id)
-            del modmail["replacements"][index]
-            with open("lib/json/var.json", "w") as f:
-                channels = json.dump(modmail, f)
-            await ctx.send("You're now unhidden! 🙆")
+    async def close(self, ctx, argument=None):
+        await cp.process_command(ctx)
+        permission = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1;", ctx.author.id)
+        if permission['rank'] in [0,1]:
+            argument = argument or ctx.channel.id
         else:
-            await ctx.send("You are not hidden! 😡")
-            print(modmail["replacements"])
+            argument = ctx.channel.id
+        ticket = await self.bot.db.fetchrow("SELECT channel_id FROM tickets WHERE channel_id=$1", argument)
+        if not ticket:
             return
-
-
+        ticket = self.bot.get_channel(ticket['channel_id'])
+        bot_message = await ctx.send("Are you sure you want to close this ticket?")
+        await bot_message.add_reaction(emoji="❌")
+        await bot_message.add_reaction(emoji="✅")
+        def check(reaction, user):
+            return user == ctx.author and reaction.emoji in ['✅', '❌']
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=30.0, check=check)
+        except asyncio.TimeoutError:
+            pass
+        else:
+            if str(reaction) == "✅":
+                await ctx.send("Closing in 5 seconds...")
+                await self.bot.db.execute("DELETE FROM tickets WHERE channel_id=$1;", argument)
+                await asyncio.sleep(5)
+                await ticket.delete(reason="Closed ticket")
     @commands.command()
-    async def reply(self, ctx, *, msg):
-        with open("lib/json/channels.json", "r") as f:
-            config = json.load(f)
-        if ctx.channel.id != config["mail_channel"]:
-            return
-
-        if self.last_user is None:
-            await ctx.send("No user to reply to!")
-            return
-        await self.dm.callback(self, ctx, user=self.last_user, msg=msg)
+    async def blacklist(self, ctx, user_id, *, reason):
+        await cp.process_command(ctx)
+        permission = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1;", ctx.author.id)
+        if permission['rank'] in [0,1]:
+            if user_id.lower() == "channel":
+                user = await self.bot.db.fetchrow("SELECT discord_id, channel_id FROM tickets WHERE channel_id=$1;", ctx.channel.id)
+                if user:
+                    user_id = user['discord_id']
+                else:
+                    return
+            await ctx.send("✅ Blacklisted "+str(user_id))
+            await self.bot.db.execute("INSERT INTO user_blacklist(discord_id, blacklist_at, blacklist_reason) VALUES ($1,$2,$3);", user_id, date.today(), reason)
     @commands.command()
-    async def spam(self, ctx, user : discord.User, times : int, *, msg):
-        with open("lib/json/channels.json", "r") as f:
-            config = json.load(f)
-        IF_DEV = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1", ctx.author.id)
-        if IF_DEV:
-            return
-        with ctx.typing():
-            for i in range(times):
-                await user.send(msg)
-                await asyncio.sleep(1.25)
-            await ctx.message.add_reaction('📬')        
-
-    @commands.command()
-    async def blacklist(self, ctx, user : int, *, reason=None):
-        developers = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1;", ctx.author.id)
-        if developers:
-            blacklist_check = await self.bot.db.fetch("SELECT discord_id FROM user_blacklist WHERE discord_id=$1;", user)
-            if not blacklist_check:
-                await self.bot.db.execute("INSERT INTO user_blacklist(discord_id, blacklist_at, blacklist_reason) VALUES ($1, $2, $3);", user, date.today(), reason)
-                await ctx.send(f"User `{user}` has been blacklisted from Bloxy Tools Direct Messages.")
-            else:
-                await ctx.send("This user is already blacklisted!")
-    @commands.command()
-    async def unblacklist(self, ctx, user : int):
-        developers = await self.bot.db.fetch("SELECT discord_id FROM developers WHERE discord_id=$1;", ctx.author.id)
-        if developers:
-            blacklist_check = await self.bot.db.fetch("SELECT discord_id FROM user_blacklist WHERE discord_id=$1;", user)
-            if blacklist_check:
-                await self.bot.db.execute("DELETE FROM user_blacklist WHERE discord_id=$1;", user)
-                await ctx.send(f"User `{user}` has been unblacklisted")
-            else:
-                await ctx.send("Couldn't find a user with that ID!")
+    async def unblacklist(self, ctx, user_id):
+        await cp.process_command(ctx)
+        permission = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1;", ctx.author.id)
+        if permission['rank'] in [0,1]:
+            if user_id.lower() == "channel":
+                user = await self.bot.db.fetchrow("SELECT discord_id, channel_id FROM tickets WHERE channel_id=$1;", ctx.channel.id)
+                if user:
+                    try:
+                        user_id = user['discord_id']
+                    except:
+                        pass
+            await ctx.send("✅ Un-blacklisted "+str(user_id))
+            await self.bot.db.execute("DELETE FROM user_blacklist WHERE discord_id=$1;", int(user_id))
 
 def setup(bot):
-    bot.add_cog(ModMail(bot))
+    bot.add_cog(Modmail(bot))
+    
