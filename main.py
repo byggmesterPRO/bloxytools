@@ -95,12 +95,9 @@ async def reload(ctx):
 
 @tasks.loop(hours=24)
 async def clear_today():
-    with open('lib/json/stats.json', 'r') as f:
-        stats = json.load(f)
-    stats['commands_today'] = 0
-    stats['verified_users_today'] = 0
-    with open('lib/json/stats.json', 'w') as f:
-        stats = json.dump(stats, f)
+    await bot.db.execute("UPDATE statistics SET number=0 WHERE type=$1;", "commands_today")
+
+
 def get_guildCount():
     guild_count = 0
     for guild in bot.guilds:
@@ -122,6 +119,6 @@ async def on_shard_ready(shard_id):
 change_pr.start()
 loop2.run_until_complete(create_db_pool())
 clear_today.start()
-TOKEN = config['token']
+TOKEN = config['token2']
 bot.loop.create_task(change_pr())
 bot.run(TOKEN)

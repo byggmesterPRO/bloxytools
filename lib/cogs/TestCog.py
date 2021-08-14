@@ -1,4 +1,5 @@
 #Importing stuff
+from lib.cogs.RobloxCommands import RobloxCommands
 import discord
 import time
 import json
@@ -84,6 +85,5 @@ class TestCog(commands.Cog):
         await ctx.send("Fetching the member list and updating.")
         await asyncio.sleep(60)
         await ctx.send("All users is updated!")
-
 def setup(bot):
     bot.add_cog(TestCog(bot))

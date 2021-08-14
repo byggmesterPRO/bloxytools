@@ -54,11 +54,13 @@ class Modmail(commands.Cog):
             pass
         else:
             if str(reaction) == "✅":
-                await bot_message.delete()  
-                ticket = await ticket_category.create_text_channel(message.author.name + "-" + message.author.discriminator)
-                await ticket.send(message.author.name + "#" + message.author.discriminator + " opened a ticket and said\n```" + message.content + "\n```")
-                await message.author.send(embed=None, content="✅ Support ticket opened! You are now chatting with support!")
-                await self.bot.db.execute("INSERT INTO tickets(discord_id, channel_id) VALUES($1, $2);", message.author.id, ticket.id)
+                ticketOpened = await self.bot.db.fetchrow("SELECT discord_id, channel_id FROM tickets WHERE discord_id=$1;", message.author.id)
+                if not ticketOpened:
+                    ticket = await ticket_category.create_text_channel(message.author.name + "-" + message.author.discriminator)
+                    await ticket.send(message.author.name + "#" + message.author.discriminator + " opened a ticket and said\n```" + message.content + "\n```")
+                    await bot_message.delete()  
+                    await message.author.send(embed=None, content="✅ Support ticket opened! You are now chatting with support!")
+                    await self.bot.db.execute("INSERT INTO tickets(discord_id, channel_id) VALUES($1, $2);", message.author.id, ticket.id)
 
     @commands.command()
     async def close(self, ctx, argument=None):
