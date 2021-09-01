@@ -2,7 +2,6 @@
 import discord
 import json
 import asyncio
-from lib.Functions import CommandProcess as cp 
 
 from datetime import date
 from lib.styling import EmbedMaker
@@ -64,7 +63,7 @@ class Modmail(commands.Cog):
 
     @commands.command()
     async def close(self, ctx, argument=None):
-        await cp.process_command(ctx)
+         
         permission = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1;", ctx.author.id)
         if permission['rank'] in [0,1]:
             argument = argument or ctx.channel.id
@@ -91,7 +90,7 @@ class Modmail(commands.Cog):
                 await ticket.delete(reason="Closed ticket")
     @commands.command()
     async def blacklist(self, ctx, user_id, *, reason):
-        await cp.process_command(ctx)
+         
         permission = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1;", ctx.author.id)
         if permission['rank'] in [0,1]:
             if user_id.lower() == "channel":
@@ -104,7 +103,7 @@ class Modmail(commands.Cog):
             await self.bot.db.execute("INSERT INTO user_blacklist(discord_id, blacklist_at, blacklist_reason) VALUES ($1,$2,$3);", user_id, date.today(), reason)
     @commands.command()
     async def unblacklist(self, ctx, user_id):
-        await cp.process_command(ctx)
+         
         permission = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1;", ctx.author.id)
         if permission['rank'] in [0,1]:
             if user_id.lower() == "channel":

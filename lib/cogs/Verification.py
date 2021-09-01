@@ -4,7 +4,6 @@ import aiohttp
 import json
 import random
 
-from lib.Functions import CommandProcess as cp 
 from datetime import date
 from discord.ext import commands
 
@@ -27,7 +26,7 @@ class Verification(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 10.0, commands.BucketType.user)
     async def verify(self, ctx, *, arg=None):
-        await cp.process_command(ctx)
+         
         IF_DEVELOPER = await self.bot.db.fetchrow("SELECT rank FROM permissions WHERE discord_id=$1", ctx.author.id)
         if IF_DEVELOPER['rank'] in [0,1]:
             arg = arg or ctx.author.id
@@ -99,7 +98,7 @@ class Verification(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 20.0, commands.BucketType.user)
     async def getroles(self, ctx):
-        await cp.process_command(ctx)
+         
         verified = await self.bot.db.fetchrow("SELECT discord_id FROM user_data WHERE discord_id=$1;", ctx.author.id)
         if not verified:
             await self.verify.callback(self, ctx)
@@ -109,7 +108,7 @@ class Verification(commands.Cog):
 
     @commands.command()
     async def unverify(self, ctx, *, arg=None):
-        await cp.process_command(ctx)
+         
         if arg and ctx.author.id == 257073333273624576:
             checkIfAlreadyVerified = await self.bot.db.fetchrow("SELECT roblox_id FROM user_data WHERE discord_id=$1;", int(arg))
             RobloxId = int(arg)

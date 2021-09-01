@@ -7,7 +7,7 @@ import asyncio
 
 from discord.ext import commands
 from lib.styling import EmbedMaker
-from lib.Functions import CommandProcess as cp
+
 
 with open("lib/json/config.json", "r") as f:
     config = json.load(f)
@@ -25,7 +25,7 @@ class PointStore(commands.Cog):
     @commands.command(aliases=['inv'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def inventory(self, ctx, *, arg=None):
-        await cp.process_command(ctx)
+         
         inv = await self.bot.db.fetchrow("SELECT inventory FROM point_data WHERE user_id=$1;", ctx.author.id)
         invString = ""
         if not inv['inventory']:
@@ -39,26 +39,26 @@ class PointStore(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def givepoints(self, ctx, user_id, *, arg:int):
-        await cp.process_command(ctx)
+         
         balance = await self.bot.db.fetchrow("SELECT points FROM point_data WHERE user_id=$1;", ctx.author.id)
         await self.bot.db.execute("UPDATE point_data SET points=$1 WHERE user_id=$2;", balance['points']+arg, int(user_id))
         await ctx.send(f"Gave `{user_id}`, {str(arg)} points!")
     @commands.command()
     @commands.is_owner()
     async def setpoints(self, ctx, user_id, *, arg:int):
-        await cp.process_command(ctx)
+         
         await self.bot.db.execute("UPDATE point_data SET points=$1 WHERE user_id=$2;", arg, int(user_id))
         await ctx.send(f"{user_id}'s points now set to `{str(arg)}`")
     @commands.command()
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def shop(self, ctx):
-        await cp.process_command(ctx)
+         
         embed = EmbedMaker.pointStore_embed(ctx)
         await ctx.send(embed=embed)
     @commands.command(aliases=['bal', 'points'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def balance(self, ctx):
-        await cp.process_command(ctx)
+         
         balance = await self.bot.db.fetchrow("SELECT points FROM point_data WHERE user_id=$1;", ctx.author.id)
         embed = EmbedMaker.default_embed(ctx, f"You have {balance['points']} points!")
         await ctx.send(embed=embed)    
@@ -67,7 +67,7 @@ class PointStore(commands.Cog):
     async def buy(self, ctx, *, item):
         item = item.lower().replace(" ", "")
         if item in storeIds:
-            await cp.process_command(ctx)
+             
             l = [storeIds.index(i) for i in storeIds if item in i]
             price = store['store'][storeIds[l[0]]]['price']
             title = store['store'][storeIds[l[0]]]['title']
@@ -113,7 +113,7 @@ class PointStore(commands.Cog):
     @commands.command()
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def leaderboard(self, ctx, msg=None):
-        await cp.process_command(ctx)
+         
         if not msg:
             await ctx.send("Remember to type either `points` or `votes` when typing the command next time")
             return

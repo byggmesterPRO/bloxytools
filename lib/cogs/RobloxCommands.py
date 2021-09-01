@@ -4,7 +4,7 @@ import aiohttp
 import time
 import random
 
-from lib.Functions import CommandProcess as cp
+
 from datetime import datetime as dt, timedelta, date
 from lib.styling import EmbedMaker
 from discord.ext import commands
@@ -189,7 +189,7 @@ class RobloxCommands(commands.Cog):
     @commands.command(aliases=['qid', 'id'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def quickid(self, ctx, *, username_or_id):
-        await cp.process_command(ctx)
+         
         result = ""
         message = await ctx.send("Fetching user ids...")
         users = username_or_id.replace(" ", "").split(",")
@@ -206,7 +206,7 @@ class RobloxCommands(commands.Cog):
     @commands.command(aliases=['u', 'profile'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def user(self, ctx, *, username_or_id):
-        await cp.process_command(ctx)
+         
         data = await fetch_userinfo(username_or_id)
         if isinstance(data, list):
             roblox_id = data[0]
@@ -240,7 +240,7 @@ class RobloxCommands(commands.Cog):
     @commands.command(aliases=['age', 'a'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def howold(self, ctx, *, username_or_id):
-        await cp.process_command(ctx)
+         
         data = await fetch_id(username_or_id)
         created = data[3]
         username = data[1]
@@ -262,7 +262,7 @@ class RobloxCommands(commands.Cog):
     @commands.command(aliases=['ga'])
     @commands.cooldown(1.0, 5.0, commands.BucketType.user)
     async def game(self, ctx, *, game_name):
-        await cp.process_command(ctx)
+         
         game = await fetch_game(ctx, game_name)
         if not game:
             await ctx.send("Couldn't find this game!")
@@ -315,7 +315,7 @@ class RobloxCommands(commands.Cog):
     async def check(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send("❌ You need to choose a type! Possible types are `group, audio`!")
-        await cp.process_command(ctx)
+         
     
     @check.command()
     async def group(self, ctx, group_id, *, users):

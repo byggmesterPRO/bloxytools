@@ -5,7 +5,6 @@ from discord.ext import commands, tasks
 from lib.styling import EmbedMaker
 import json
 
-from lib.Functions import CommandProcess as cp
 import asyncio
 import logging
 
@@ -23,7 +22,7 @@ class TopGG(commands.Cog):
 
     @commands.command()
     async def votecheck(self, ctx, *, arg=None):
-        await cp.process_command(ctx)
+         
         arg = arg or ctx.author.id
         data = await self.dblpy.get_user_vote(arg)
         if data == True:
